@@ -1,3 +1,7 @@
+package UserClasses;
+/**
+ * Represents a user account.
+ */
 public class User {
     private String username;
     private String password;
