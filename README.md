@@ -1,1 +1,1 @@
-# cs180-lab11team1-manager-project
+# CS180 Lab 11 Team 1 Movie Theater Project
