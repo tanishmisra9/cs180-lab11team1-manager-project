@@ -46,6 +46,10 @@ public class BasicUser implements User {
         return type;
     }
 
+    public double getPriceMultiplier() {
+        return 1.0;
+    }
+
     public void setType(UserType type) {
         this.type = type;
     }
