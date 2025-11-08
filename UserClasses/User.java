@@ -1,34 +1,18 @@
 package UserClasses;
-/**
- * Represents a user account.
+
+/*
+ * Public interface for User, allows for specialized Users
+ * Defines all operations and fields a user class must support
  */
-public class User {
-    private String username;
-    private String password;
-    private boolean isAdmin;
 
-    public User(String username, String password, boolean isAdmin) {
-        this.username = username;
-        this.password = password;
-        this.isAdmin = isAdmin;
-    }
+public interface User {
 
-    public String getUsername() {
-        return username;
-    }
-    public String getPassword() {
-        return password;
-    }
-    public boolean isAdmin() {
-        return isAdmin;
-    }
+    String getUsername();
+    String getPassword();
+    boolean isAdmin();
+    double getPriceMultiplier();
 
-   
-    public void setPassword(String newPassword) {
-        this.password = newPassword;
-    }
+    void setPassword(String newPassword);
+    void setAdmin(boolean isAdmin);
 
-    public void setAdmin(boolean isAdmin) {
-        this.isAdmin = isAdmin;
-    }
 }
