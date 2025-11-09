@@ -1,4 +1,4 @@
-package UserClasses;
+package src.UserClasses;
 
 public class TestUserConcurrency {
     

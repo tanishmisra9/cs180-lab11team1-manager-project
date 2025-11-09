@@ -1,3 +1,6 @@
+package src.ReservationClasses;
+import src.UserClasses.User;
+
 import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
@@ -32,7 +35,7 @@ public class ReservationDatabase implements Serializable {
     }
 
     public synchronized boolean reserve(User user, Reservation r) {
-        String seatKey = r.getRow() + r.getSeat();
+        String seatKey = r.getRow() + "" + r.getSeat();
 
         if (!isValidSeat(r.getMovie(), r.getDate(), r.getRow(), r.getSeat())) {
             return false;
