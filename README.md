@@ -30,7 +30,7 @@ A class which contains a jagged array of seats, where a seat is either "empty" o
 An interface used for making reservation types. Different reservations have different movies, dates, and seats. A reservation can also be cancelled
 
 ### Class ReservationDatabase
-//TODO
+A class that reads serialized objects that represent user reservations and seats taken into a map, and writes the data back to the file. This also includes checking for if a seat is already booked and assigns given reservations to the user.
 
 ### Class BasicReservation
 A class which acts as the core record for bookings' relevant information like User, Date & Time of reservation, seat number, etc. Also overrides equals() to check reservations purely on time, date, movie, and seat to prevent double booking.
