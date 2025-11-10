@@ -32,5 +32,8 @@ An interface used for making reservation types. Different reservations have diff
 ### Class ReservationDatabase
 //TODO
 
+### Class BasicReservation
+A class which acts as the core record for bookings' relevant information like User, Date & Time of reservation, seat number, etc. Also overrides equals() to check reservations purely on time, date, movie, and seat to prevent double booking.
+
 
 
