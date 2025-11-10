@@ -53,3 +53,32 @@ public class BasicReservation implements Reservation, Serializable {
     public void cancel() {
         active = false;
     }
+
+    //Overrides .equals() to check if two people are trying to reserve the same time, seat, and movie
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) { //quick check for equality
+            return true;
+        } else if (o == null) {
+            return false;
+        } else {
+            BasicReservation other = (BasicReservation) o; //casting object to use getters
+        }
+
+        if (showTime.equals(other.getShowtime()) &&
+                movie.equals(other.getMovie()) &&
+                date.equals(other.getDate()) &&
+                row == other.getRow() &&
+                seat == other.getSeat()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //Need to override hashcode if I override .equals() so that only equivalent objects have same hash
+    @Override
+    public int hashCode() {
+        return Objects.hash(showTime, movie, date, row, seat);
+    }
+}
