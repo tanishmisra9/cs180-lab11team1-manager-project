@@ -2,7 +2,7 @@ import java.time.LocalDate;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class BasicReservation implements Reservation, Serializable {
+public class BasicReservation implements Reservation, Serializable throws IllegalArgumentException{
     //fields
     private String user;
     private String showTime;
@@ -14,6 +14,26 @@ public class BasicReservation implements Reservation, Serializable {
 
     //constructor
     public BasicReservation(String user, String showTime, String movie, LocalDate date, int row, int seat) {
+
+        //check for empty strings
+        if (user == null || user.trim().isEmpty()) {
+            throw new IllegalArgumentException("User can't be empty.");
+        }
+        if (showTime == null || showTime.trim().isEmpty()) {
+            throw new IllegalArgumentException("Showtime can't be empty.");
+        }
+        if (movie == null || movie.trim().isEmpty()) {
+            throw new IllegalArgumentException("Movie can't be empty.");
+        }
+        if (date == null) {
+            throw new IllegalArgumentException("Reservation date can't be null.");
+        }
+
+        //check for illegal nums
+        if (row < 1 || seat < 1) {
+            throw new IllegalArgumentException("Row and seat numbers must be positive.");
+        }
+
         this.user = user;
         this.showTime = showTime;
         this.movie = movie;
@@ -24,7 +44,7 @@ public class BasicReservation implements Reservation, Serializable {
 
     // Identifying and linking
     @Override
-    public String getUser() {return user;}       // who booked the reservation
+    public String getUser() {return user;}     // who booked the reservation
 
     @Override
     public String getShowtime() {return showTime;}   // showtime ID or descriptor
@@ -61,9 +81,8 @@ public class BasicReservation implements Reservation, Serializable {
             return true;
         } else if (o == null) {
             return false;
-        } else {
-            BasicReservation other = (BasicReservation) o; //casting object to use getters
         }
+        BasicReservation other = (BasicReservation) o; //casting object to use getters
 
         if (showTime.equals(other.getShowtime()) &&
                 movie.equals(other.getMovie()) &&
