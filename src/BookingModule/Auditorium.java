@@ -174,6 +174,14 @@ public class Auditorium {
         return date;
     }
 
+    public int getRowNumber() {
+        return seats.length;
+    }
+
+    public int getColumnNumber() {
+        return seats[0].length;
+    } 
+
     public void setDate(LocalDateTime date) {
         this.date = date;
     }
@@ -341,5 +349,11 @@ public class Auditorium {
         return seats[row][col].equals("empty");
     }
 
+    public boolean isValidSeat(int row, int col) {
+        if(row < 0 || row >= seats.length) return false;
+	if(seats[row] == null || col < 0 || col >= seats[row].length) return false;
+
+        return true;
+    }
 
 }
