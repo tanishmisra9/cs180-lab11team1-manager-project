@@ -9,10 +9,9 @@ public class ReservationDatabase implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Map<User, List<Reservation>> reservationMap = new HashMap<>();
-    private Map<String, Map<LocalDate, Set<String>>> seatMap = new HashMap<>();
-    private Map<String, Map<LocalDate, Set<String>>> validSeats = new HashMap<>();
+    private List<Auditorium> auditorums = new ArrayList<>();
 
-    public static ReservationDatabase loadDatabase() {
+    public static ReservationDatabase loadDatabase() { // call on server startup 
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("db.dat"))) {
             return (ReservationDatabase) in.readObject();
         } catch (FileNotFoundException e) {
@@ -22,7 +21,7 @@ public class ReservationDatabase implements Serializable {
         }
     }
 
-    public void saveData() {
+    public void saveData() { // call on server sleep
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("db.dat"))) {
             out.writeObject(this);
         } catch (IOException e) {
@@ -34,34 +33,21 @@ public class ReservationDatabase implements Serializable {
         return reservationMap.getOrDefault(u, new ArrayList<>());
     }
 
-    public synchronized boolean reserve(User user, Reservation r) {
-        String seatKey = r.getRow() + "" + r.getSeat();
+    public void addAuditorium(Auditorium auditorum) {
+	auditoriums.add(auditorum);
+    }
 
-        if (!isValidSeat(r.getMovie(), r.getDate(), r.getRow(), r.getSeat())) {
-            return false;
-        }
+    public synchronized boolean reserve(User user, Reservation r, Auditorium a) {
+	int row = r.getRow() - 1;
+        int col = r.getSeat() - 1;
 
-        if (isSeatTaken(r.getMovie(), r.getDate(), r.getRow(), r.getSeat())) {
-            return false;
-        }
+        if(!a.isValidSeat(row, col) || !a.checkSeat(row, col)) return false;
 
-        seatMap.computeIfAbsent(r.getMovie(), m -> new HashMap<>())
-            .computeIfAbsent(r.getDate(), d -> new HashSet<>())
-            .add(seatKey);
-
+        a.setReservation(user.getName(), row, col);
         reservationMap.computeIfAbsent(user, k -> new ArrayList<>()).add(r);
 
         return true;
     }
 
-    public synchronized boolean isSeatTaken(String movie, LocalDate date, int row, int seat) {
-        String seatKey = row + "" + seat;
-        return seatMap.getOrDefault(movie, Map.of()).getOrDefault(date, Set.of()).contains(seatKey);
-    }
-
-    public synchronized boolean isValidSeat(String movie, LocalDate date, int row, int seat) {
-        String seatKey = row + "" + seat;
-        return validSeats.getOrDefault(movie, Map.of()).getOrDefault(date, Set.of()).contains(seatKey);
-    }
 }
 
