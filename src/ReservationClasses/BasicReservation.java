@@ -2,6 +2,28 @@ import java.time.LocalDate;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * The BasicReservation class of CS180 Team Project.
+ *
+ **Represents a basic, concrete implementation of a movie or event reservation.**
+ *
+ * <p>This class encapsulates all necessary details for a single reservation,
+ * including the user who booked it, the movie, showtime, date, and specific
+ * seating information (row and seat number). It implements the {@code Reservation}
+ * interface and is {@link java.io.Serializable} to allow it to be stored or
+ * transmitted. It includes methods for checking reservation status and cancellation.</p>
+ *
+ * <p>The {@code equals} and {@code hashCode} methods are overridden to define equality
+ * based only on the core booking details (showtime, movie, date, row, and seat),
+ * which is critical for preventing double-booking of the same seat.</p>
+ *
+ *
+ * <p>Purdue University -- CS18000 -- Fall 2025</p>
+ *
+ * @author Ved Joshi
+ * @version Nov 10, 2025
+ */
+
 public class BasicReservation implements Reservation, Serializable throws IllegalArgumentException{
     //fields
     private String user;
