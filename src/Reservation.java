@@ -1,6 +1,7 @@
 package src;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public interface Reservation {
     
@@ -11,6 +12,7 @@ public interface Reservation {
     // Movie and scheduling
     String getMovie();      
     LocalDate getDate();
+    LocalDateTime getDateTime();
 
     // Seating info
     int getRow();

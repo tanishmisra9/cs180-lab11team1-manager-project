@@ -13,7 +13,7 @@ public class ReservationDatabaseTest {
 	@Before
 	public void setup() {
 		db = new ReservationDatabase();
-		user = new BasicUser("Test User", "password", false, UserType.STANDARD);
+		user = new BasicUser("Test User", "password", false, UserType.REGULAR);
 	
 		LocalDateTime now = LocalDateTime.now();
 		auditorium = new Auditorium(6, 7, 5.0, "Look Back", now);

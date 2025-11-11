@@ -38,7 +38,7 @@ public class UserAccountManager {
                     default -> UserType.REGULAR;
                 };
 
-                BasicUser user = new BasicUser(username, password, isAdmin);
+                BasicUser user = new BasicUser(username, password, isAdmin, type);
                 user.upgradeUser(type, 0.0); // Set user tier without cost
                 users.put(username, user);
                 loaded++;
@@ -87,7 +87,7 @@ public class UserAccountManager {
             return false;
         }
 
-        BasicUser user = new BasicUser(username, password, isAdmin);
+        BasicUser user = new BasicUser(username, password, isAdmin, UserType.REGULAR);
         user.upgradeUser(type, 0.0);
         users.put(username, user);
 
