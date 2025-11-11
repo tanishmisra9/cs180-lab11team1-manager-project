@@ -1,11 +1,18 @@
 # CS180 Lab 11 Team 1 Movie Theater Project
 
+## Compiling/Running
+
+Run through MainInputDriver.java
+
 ## Submissions
 
 Ved Joshi - Submitted Phase 1 Vocareum Workspace.
 
 
 ## Class descriptions
+
+### MainInputDriver.java
+The driver class to compile and run the program.
 
 ### Interface User
 An interface of a User. It is used to create a type of user, in which a username and password can be obtained, can be checked if an administrator, and a password and administration permissions can be set. A price multiplier can also be obtained, depending on the type of users (ie: discounts for certain types of users).
