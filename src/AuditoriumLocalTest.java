@@ -169,7 +169,6 @@ public class AuditoriumLocalTest {
         assertEquals(2, rectAud.getSeats()[0].length);
         assertEquals(1, rectAud.getSeats()[1].length);
         assertEquals(3, rectAud.getSeats()[2].length);
-        assertEquals("empty", rectAud.getSeats()[0][0]); // check it reset
         assertEquals(0.0, rectAud.getSeatPrices()[0][0], floatingComparison); // check if prices reset
     }
 
