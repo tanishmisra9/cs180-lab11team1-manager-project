@@ -1,5 +1,3 @@
-package src;
-
 import java.time.*;
 import java.util.Arrays;
 
@@ -12,7 +10,7 @@ import java.util.Arrays;
  * <p>Purdue University -- CS18000 -- Fall 2025</p>
  *
  * @author Logan Dalton
- * @version Nov 10, 2025
+ * @version Nov 8, 2025
  */
 
 
@@ -126,11 +124,11 @@ public class Auditorium implements AuditoriumInterface {
 
         for (int i = 0; i < seats.length; i++) {
 
-                this.seats[i] = new String[seats[i].length];
-                Arrays.fill(this.seats[i], "empty");
+            this.seats[i] = new String[seats[i].length];
+            Arrays.fill(this.seats[i], "empty");
 
-                this.seatPrices[i] = new double[seats[i].length];
-                Arrays.fill(this.seatPrices[i], prices);
+            this.seatPrices[i] = new double[seats[i].length];
+            Arrays.fill(this.seatPrices[i], prices);
         }
     }
 
@@ -155,20 +153,36 @@ public class Auditorium implements AuditoriumInterface {
     //--Getters/Setters--//
 
     @Override
-    public String getShowingName () {
+    public String getShowingName() {
         return showingName;
     }
-    
+
     @Override
-    public void setShowingName (String newName) {
+    public void setShowingName(String newName) {
+        showingName = newName;
+    }
+
+    
+    // Movie methods are a quick fix to resolve issues with other classes using getMovie instead of getShowing
+    public String getMovie() {
+        return showingName;
+    }
+
+    public void setMovie(String newName) {
         showingName = newName;
     }
     
+    public LocalDateTime getMovieDate() {
+        return showingDate;
+    }
+    
+
+
     @Override
     public String[][] getSeats() {
         String[][] copy = new String[this.seats.length][];
         for (int i = 0; i < this.seats.length; i++) {
-                copy[i] = Arrays.copyOf(this.seats[i], this.seats[i].length);
+            copy[i] = Arrays.copyOf(this.seats[i], this.seats[i].length);
         }
         return copy;
     }
@@ -177,7 +191,7 @@ public class Auditorium implements AuditoriumInterface {
     public double[][] getSeatPrices() {
         double[][] copy = new double[this.seatPrices.length][];
         for (int i = 0; i < this.seatPrices.length; i++) {
-                copy[i] = Arrays.copyOf(this.seatPrices[i], this.seatPrices[i].length);
+            copy[i] = Arrays.copyOf(this.seatPrices[i], this.seatPrices[i].length);
         }
         return copy;
     }
@@ -534,8 +548,8 @@ public class Auditorium implements AuditoriumInterface {
     //--Returns true if a seat is valid--//
     @Override
     public boolean isValidSeat(int row, int col) {
-        if(row < 0 || row >= seats.length) return false;
-        if(seats[row] == null || col < 0 || col >= seats[row].length) return false;
+        if (row < 0 || row >= seats.length) return false;
+        if (seats[row] == null || col < 0 || col >= seats[row].length) return false;
 
         return true;
     }
