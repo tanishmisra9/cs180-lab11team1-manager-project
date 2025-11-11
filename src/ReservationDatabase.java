@@ -39,7 +39,7 @@ public class ReservationDatabase implements Serializable {
     public synchronized boolean reserve(User user, Reservation r) {
 	Auditorium target = null;
 	for(Auditorium a: auditoriums) {
-		if (a.getShowingName().equals(r.getMovie()) && a.getShowingDate().equals(r.getDateTime())) {
+		if (a.getShowingName().equals(r.getMovie()) && a.getShowingDate().isEqual(r.getDateTime())) {
 			target = a;
 			break;
 		}
