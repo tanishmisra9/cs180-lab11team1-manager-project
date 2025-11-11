@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 
 import java.io.*;
+import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
 
@@ -79,16 +80,46 @@ public class ReservationTest {
 
         //Sample test from one of our earlier homeworks. 
         @Test(timeout = 1000)
-        public void testAdultOnlyEventToString() {
-            AdultOnlyEvent myEvent = new AdultOnlyEvent(5.099, 18, 99, 5);
-            String actualToString = myEvent.toString();
-            String expectedToString = "AdultOnlyEvent\n" +
-                    "TicketPrice: 5.10\n" +
-                    "LowerAgeLimit: 18\n" +
-                    "UpperAgeLimit: 99\n" +
-                    "TicketsRemaining: 5";
-            assertEquals("Ensure your toString() method in AdultOnlyEvent.java returns the correct value!",
-                    expectedToString, actualToString);
+        public void testConstructor() {
+            String user = null;
+            String movie = "Jurassic Park";
+            LocalDateTime date = LocalDateTime.now();
+            int row = 1;
+            int seat = 1;
+
+            //null user
+            try {
+                BasicReservation testReservation = new BasicReservation(user, movie, date, row, seat);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+
+            //null movie
+            user = "Taewoo Jung";
+            movie = null;
+            date = LocalDateTime.now();
+            row = 1;
+            seat = 1;
+
+            try {
+                BasicReservation testReservation = new BasicReservation(user, movie, date, row, seat);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+
+            //null date
+            user = "Taewoo Jung";
+            movie = "Jurassic Park";
+            date = null;
+            row = 1;
+            seat = 1;
+
+            try {
+                BasicReservation testReservation = new BasicReservation(user, movie, date, row, seat);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+
         }
     }
 }
