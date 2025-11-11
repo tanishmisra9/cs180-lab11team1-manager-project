@@ -1,6 +1,7 @@
-package src.ReservationClasses;
+package src;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.util.Objects;
@@ -44,9 +45,19 @@ public class BasicReservation implements Reservation, Serializable {
     @Override
     public String getUser() {return user;}     // who booked the reservation
 
+    @Override
+    public String getShowtime() {
+        return "";
+    }
+
     // Movie and scheduling
     @Override
     public String getMovie() {return movie;}
+
+    @Override
+    public LocalDate getDate() {
+        return null;
+    }
 
     @Override
     public LocalDateTime getDateTime() {return date;}

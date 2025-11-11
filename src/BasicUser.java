@@ -1,4 +1,4 @@
-package src.UserClasses;
+package src;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
-import src.ReservationClasses.BasicReservation;
-import src.ReservationClasses.Reservation;
 import java.time.LocalDateTime;
 
 public class BasicUser implements User {

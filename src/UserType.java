@@ -1,4 +1,4 @@
-package src.UserClasses;
+package src;
 
 public enum UserType {
     REGULAR, PREMIUM, VIP;

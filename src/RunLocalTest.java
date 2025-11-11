@@ -1,4 +1,4 @@
-package hw09;
+package src;
 
 import org.junit.Test;
 import org.junit.After;

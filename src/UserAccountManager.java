@@ -1,4 +1,4 @@
-package src.UserClasses;
+package src;
 
 import java.io.*;
 import java.util.concurrent.ConcurrentHashMap;

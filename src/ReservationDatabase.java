@@ -1,5 +1,4 @@
-package src.ReservationClasses;
-import src.UserClasses.User;
+package src;
 
 import java.io.*;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package src.UserClasses;
+package src;
 
 /*
  * Public interface for User, allows for specialized Users

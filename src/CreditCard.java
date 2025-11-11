@@ -1,4 +1,4 @@
-package src.UserClasses;
+package src;
 
 /**
  * Represents a user's credit card used for transactions.

@@ -1,4 +1,4 @@
-package src.ReservationClasses;
+package src;
 
 import java.time.LocalDate;
 
