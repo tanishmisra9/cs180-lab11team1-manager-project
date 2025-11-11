@@ -1,5 +1,13 @@
 # CS180 Lab 11 Team 1 Movie Theater Project
 
+## Compiling and Running
+
+
+## Submissions
+
+[STUDENT NAME] - Submitted Phase 1 Vocareum Workspace.
+
+
 ## Class descriptions
 
 ### Interface User
