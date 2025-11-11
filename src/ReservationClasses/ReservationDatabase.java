@@ -55,7 +55,7 @@ public class ReservationDatabase implements Serializable {
 
         if(!target.isValidSeat(row, col) || !target.checkSeat(row, col)) return false;
 
-        a.setReservation(user.getUsername(), row, col);
+        target.setReservation(user.getUsername(), row, col);
         reservationMap.computeIfAbsent(user, k -> new ArrayList<>()).add(r);
 
         return true;
