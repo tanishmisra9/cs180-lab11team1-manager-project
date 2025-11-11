@@ -149,6 +149,23 @@ public class Auditorium implements AuditoriumInterface {
         }
     }
 
+    public Auditorium(int rows, int cols, double prices, LocalDateTime date) {
+        this(rows, cols, prices);
+        this.date = date;
+    }
+
+    public Auditorium(int rows, int cols, double price, String movie, LocalDateTime showingTime) {
+        this(rows, cols, price);
+	    this.showingName = movie;
+        this.showingTime = showingTime;
+    }
+
+    public Auditorium(int[] rowLengths, double price, String movie, LocalDateTime showingTime) {
+        this(rowLengths, price);  // existing jagged constructor
+        this.showingName = movie;
+        this.showingDate = showingTime;
+    }
+
 
     //----METHODS---//
 

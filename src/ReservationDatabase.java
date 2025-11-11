@@ -8,7 +8,7 @@ public class ReservationDatabase implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Map<User, List<Reservation>> reservationMap = new HashMap<>();
-    private List<Auditorium> auditorums = new ArrayList<>();
+    private List<Auditorium> auditoriums = new ArrayList<>();
 
     public static ReservationDatabase loadDatabase() { // call on server startup 
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("db.dat"))) {
@@ -39,7 +39,7 @@ public class ReservationDatabase implements Serializable {
     public synchronized boolean reserve(User user, Reservation r) {
 	Auditorium target = null;
 	for(Auditorium a: auditoriums) {
-		if (a.getMovie().equals(r.getMovie()) && a.getShowingDate().equals(r.getDateTime())) {
+		if (a.getShowingName().equals(r.getMovie()) && a.getShowingDate().equals(r.getDateTime())) {
 			target = a;
 			break;
 		}

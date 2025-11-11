@@ -21,11 +21,11 @@ public class BasicUser implements User {
     private final List<String> transactionHistory = new CopyOnWriteArrayList<>();
     private final ReentrantLock lock = new ReentrantLock();
 
-    public BasicUser(String username, String password, boolean isAdmin) {
+    public BasicUser(String username, String password, boolean isAdmin, UserType type) {
         this.username = username;
         this.password = hashPassword(password);
         this.isAdmin = isAdmin;
-        this.type = UserType.REGULAR;
+        this.type = type;
     }
 
     // Utility: SHA-256 password hashing
