@@ -1,48 +1,22 @@
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.util.Objects;
 
-/**
- * The BasicReservation class of CS180 Team Project.
- *
- **Represents a basic, concrete implementation of a movie or event reservation.**
- *
- * <p>This class encapsulates all necessary details for a single reservation,
- * including the user who booked it, the movie, showtime, date, and specific
- * seating information (row and seat number). It implements the {@code Reservation}
- * interface and is {@link java.io.Serializable} to allow it to be stored or
- * transmitted. It includes methods for checking reservation status and cancellation.</p>
- *
- * <p>The {@code equals} and {@code hashCode} methods are overridden to define equality
- * based only on the core booking details (showtime, movie, date, row, and seat),
- * which is critical for preventing double-booking of the same seat.</p>
- *
- *
- * <p>Purdue University -- CS18000 -- Fall 2025</p>
- *
- * @author Ved Joshi
- * @version Nov 10, 2025
- */
-
-public class BasicReservation implements Reservation, Serializable throws IllegalArgumentException{
+public class BasicReservation implements Reservation, Serializable {
     //fields
     private String user;
-    private String showTime;
     private String movie;
-    private LocalDate date;
+    private LocalDateTime date;
     private int row;
     private int seat;
     private boolean active = true;
 
     //constructor
-    public BasicReservation(String user, String showTime, String movie, LocalDate date, int row, int seat) {
+    public BasicReservation(String user, String movie, LocalDateTime date, int row, int seat) {
 
         //check for empty strings
         if (user == null || user.trim().isEmpty()) {
             throw new IllegalArgumentException("User can't be empty.");
-        }
-        if (showTime == null || showTime.trim().isEmpty()) {
-            throw new IllegalArgumentException("Showtime can't be empty.");
         }
         if (movie == null || movie.trim().isEmpty()) {
             throw new IllegalArgumentException("Movie can't be empty.");
@@ -57,7 +31,6 @@ public class BasicReservation implements Reservation, Serializable throws Illega
         }
 
         this.user = user;
-        this.showTime = showTime;
         this.movie = movie;
         this.date = date;
         this.row = row;
@@ -68,15 +41,12 @@ public class BasicReservation implements Reservation, Serializable throws Illega
     @Override
     public String getUser() {return user;}     // who booked the reservation
 
-    @Override
-    public String getShowtime() {return showTime;}   // showtime ID or descriptor
-
     // Movie and scheduling
     @Override
     public String getMovie() {return movie;}
 
     @Override
-    public LocalDate getDate() {return date;}
+    public LocalDateTime getDateTime() {return date;}
 
     // Seating info
     @Override
@@ -106,8 +76,7 @@ public class BasicReservation implements Reservation, Serializable throws Illega
         }
         BasicReservation other = (BasicReservation) o; //casting object to use getters
 
-        if (showTime.equals(other.getShowtime()) &&
-                movie.equals(other.getMovie()) &&
+        if (    movie.equals(other.getMovie()) &&
                 date.equals(other.getDate()) &&
                 row == other.getRow() &&
                 seat == other.getSeat()) {
@@ -120,6 +89,6 @@ public class BasicReservation implements Reservation, Serializable throws Illega
     //Need to override hashcode if I override .equals() so that only equivalent objects have same hash
     @Override
     public int hashCode() {
-        return Objects.hash(showTime, movie, date, row, seat);
+        return Objects.hash(movie, date, row, seat);
     }
 }
