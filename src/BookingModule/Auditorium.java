@@ -13,7 +13,10 @@ import java.util.Arrays;
  * @version Nov 8, 2025
  */
 
-public class Auditorium {
+
+//TODO try catch finally blocks to catch exceptions and mistakes
+//TODO JUnit testcases
+public class Auditorium implements AuditoriumInterface {
 
     //----FIELDS----//
     private String[][] seats;
@@ -50,6 +53,7 @@ public class Auditorium {
         }
 
     }
+
 
     public Auditorium(String[][] seats) {
         this.seats = seats;
@@ -158,54 +162,57 @@ public class Auditorium {
 
     //--Getters/Setters--//
 
+    @Override
     public String[][] getSeats() {
         return seats;
     }
 
+    @Override
     public double[][] getSeatPrices() {
         return seatPrices;
     }
 
+    @Override
     public LocalDateTime getShowingDate() {
         return showingDate;
     }
 
+    @Override
     public LocalDateTime getDate() {
         return date;
     }
 
-    public int getRowNumber() {
-        return seats.length;
-    }
-
-    public int getColumnNumber() {
-        return seats[0].length;
-    } 
-
+    @Override
     public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
+    @Override
     public void setSeats(String[][] seats) {
         this.seats = seats;
     }
 
+    @Override
     public void setSeatPrices(double[][] seatPrices) {
         this.seatPrices = seatPrices;
     }
 
+    @Override
     public void setSeats(int row, int col) {
         seats = new String[row][col];
     }
 
+    @Override
     public void setPrices(int row, int col) {
         seatPrices = new double[row][col];
     }
 
+    @Override
     public void setShowingDate(LocalDateTime showingDate) {
         this.showingDate = showingDate;
     }
 
+    @Override
     public void setShowingDate(int year, int month, int day, int hour, int minute) {
         showingDate = LocalDateTime.of(year, month, day, hour, minute);
     }
@@ -213,33 +220,41 @@ public class Auditorium {
 
     //--Updating the current time--//
 
+    @Override
     public void updateTime(LocalDateTime date) {
         this.date = date;
     }
 
+    @Override
     public void updateTime() {
         this.date = LocalDateTime.now();
     }
 
+    @Override
     public void updateTime(int year, int month, int day, int hour, int minute) {
         date = LocalDateTime.of(year, month, day, hour, minute);
     }
 
     //--Updating the showing time--//
+
+    @Override
     public void updateShowingTime(LocalDateTime date) {
         showingDate = date;
     }
 
+    @Override
     public void updateShowingTime() {
         showingDate = LocalDateTime.now();
     }
 
+    @Override
     public void updateShowingTime(int year, int month, int day, int hour, int minute) {
         showingDate = LocalDateTime.of(year, month, day, hour, minute);
     }
 
 
     // sets the price of a particular seat to the inputted price
+    @Override
     public void setPrice(int row, int col, double price) {
         try {
             seatPrices[row][col] = price;
@@ -252,6 +267,7 @@ public class Auditorium {
 
     // Sets all seat prices to the inputted price.
     // Iterates over each row and uses Arrays.fill() on double[] array.
+    @Override
     public void setAllPrices(double price) {
         for (int i = 0; i < seatPrices.length; i++) {
             if (seatPrices[i] != null) {
@@ -262,6 +278,7 @@ public class Auditorium {
 
 
     // increases all prices by the inputted price
+    @Override
     public void increaseAllPrices(double price) {
         for (int i = 0; i < seatPrices.length; i++) {
             for (int j = 0; j < seatPrices[i].length; j++) {
@@ -272,6 +289,7 @@ public class Auditorium {
 
 
     // multiplies prices by the inputted amount
+    @Override
     public void multiplyAllPrices(double price) {
         for (int i = 0; i < seatPrices.length; i++) {
             for (int j = 0; j < seatPrices[i].length; j++) {
@@ -281,6 +299,7 @@ public class Auditorium {
     }
 
     // sets the prices of an entire row to the inputted price
+    @Override
     public void setRowPrices(int row, double price) {
         try {
             Arrays.fill(seatPrices[row], price);
@@ -290,6 +309,7 @@ public class Auditorium {
     }
 
     // sets the prices of an entire column to the inputted price
+    @Override
     public void setColPrices(int col, double price) {
         for (int i = 0; i < seatPrices.length; i++) {
             try {
@@ -301,6 +321,7 @@ public class Auditorium {
     }
 
     // increases the prices of a row by the price
+    @Override
     public void increaseRowPrices(int row, double price) {
         for (int i = 0; i < seatPrices[row].length; i++) {
             try {
@@ -312,6 +333,7 @@ public class Auditorium {
     }
 
     // multiplies the prices of a row by the given price
+    @Override
     public void multiplyRowPrices(int row, double price) {
         for (int i = 0; i < seatPrices[row].length; i++) {
             try {
@@ -322,6 +344,7 @@ public class Auditorium {
     }
 
     // increases the prices of a col
+    @Override
     public void increaseColPrices(int col, double price) {
         for (int i = 0; i < seatPrices.length; i++) {
             try {
@@ -332,7 +355,20 @@ public class Auditorium {
         }
     }
 
+    // multiplies the prices of a col by the given price
+    @Override
+    public void multiplyColPrices(int col, double price) {
+        for (int i = 0; i < seatPrices.length; i++) {
+            try {
+                seatPrices[i][col] *= price;
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.out.println("Warning: column " + col + " is out of bounds for row " + i + ".");
+            }
+        }
+    }
+
     //sets a seat to a user's name.
+    @Override
     public boolean setReservation(String user, int row, int col) {
         if (seats[row][col].equals("empty")) {
 
@@ -345,15 +381,10 @@ public class Auditorium {
     }
 
     //returns true if a seat is available
+    @Override
     public boolean checkSeat(int row, int col) {
         return seats[row][col].equals("empty");
     }
 
-    public boolean isValidSeat(int row, int col) {
-        if(row < 0 || row >= seats.length) return false;
-	if(seats[row] == null || col < 0 || col >= seats[row].length) return false;
 
-        return true;
-    }
-
-}
+} //end class
