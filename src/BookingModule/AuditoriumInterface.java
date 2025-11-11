@@ -1,3 +1,5 @@
+package BookingModule;
+
 import java.time.LocalDateTime;
 
 /**
@@ -32,6 +34,19 @@ public interface AuditoriumInterface {
      * @return A 2D double array of seat prices.
      */
     double[][] getSeatPrices();
+
+    /**
+     * Gets the amount of rows of seats.
+     * @return an int of the amount of rows.
+     */
+    int getRowNumber();
+
+    /**
+     * Gets the amount of columns of seats.
+     * Gets the largest column of seats if array is jagged.
+     * @return the largest column of seats.
+     */
+    int getColumnNumber();
 
     /**
      * Gets the scheduled date and time of the showing.
@@ -70,14 +85,6 @@ public interface AuditoriumInterface {
      * @param col The number of columns.
      */
     void setSeats(int row, int col);
-
-    /**
-     * Re-initializes the seat prices array with new dimensions.
-     * Useful when not using a jagged array.
-     * @param row The number of rows.
-     * @param col The number of columns.
-     */
-    void setPrices(int row, int col);
 
     /**
      * Sets the showing date and time using LocalDateTime.
@@ -217,7 +224,7 @@ public interface AuditoriumInterface {
      * @param row The row index.
      * @param price The factor to multiply each seat's price in that row by.
      */
-    void multiplyVolPrices(int row, double price);
+    void multiplyColPrices(int row, double price);
 
 
     //----Reservation Management----//
@@ -238,4 +245,12 @@ public interface AuditoriumInterface {
      * @return true if the seat is "empty", false otherwise.
      */
     boolean checkSeat(int row, int col);
+
+    /**
+     * Checks if a specific seat is a valid seat.
+     * @param row The row of the seat.
+     * @param col The column of the seat.
+     * @return true if seat is valid, false otherwise.
+     */
+    boolean isValidSeat(int row, int col);
 }
