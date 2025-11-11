@@ -1,9 +1,5 @@
 package UserClasses;
 
-/*
- * Public interface for User, allows for specialized Users
- * Defines all operations and fields a user class must support
- */
 
 public interface User {
 
