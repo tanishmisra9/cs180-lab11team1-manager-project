@@ -14,7 +14,6 @@ import java.util.Arrays;
  */
 
 
-//TODO try catch finally blocks to catch exceptions and mistakes
 //TODO JUnit testcases
 public class Auditorium implements AuditoriumInterface {
 
@@ -24,7 +23,7 @@ public class Auditorium implements AuditoriumInterface {
 
     private LocalDateTime date = LocalDateTime.now();
     private LocalDateTime showingDate;
-    private String movie; 
+
 
     //----CONSTRUCTORS----//
 
@@ -51,34 +50,29 @@ public class Auditorium implements AuditoriumInterface {
                 seatPrices[i][j] = 0.00;
             }
         }
-        
-	movie = "";
+
     }
 
 
     public Auditorium(String[][] seats) {
-        this.seats = seats;
+        this.seats = new String[seats.length][];
 
         for (int i = 0; i < seats.length; i++) {
-            for (int j = 0; j < seats[i].length; j++) {
-                seats[i][j] = "empty";
-            }
+            this.seats[i] = new String[seats[i].length];
+            Arrays.fill(this.seats[i], "empty"); // Initialize the new row
+
         }
 
         seatPrices = new double[this.seats.length][];
-
         for (int i = 0; i < this.seats.length; i++) {
-
-            if (this.seats[i] != null) {
-                seatPrices[i] = new double[seats[i].length];
-
-            } else {
-                seatPrices[i] = null;
-            }
-
+            seatPrices[i] = new double[seats[i].length];
         }
 
-	movie = "";
+        for (int i = 0; i < seats.length; i++) {
+            for (int j = 0; j < seats[i].length; j++) {
+                seatPrices[i][j] = 0.00;
+            }
+        }
     }
 
     public Auditorium(int rows, int cols) {
@@ -94,8 +88,6 @@ public class Auditorium implements AuditoriumInterface {
                 seatPrices[i][j] = 0.00;
             }
         }
-
-	movie = "";
     }
 
     public Auditorium(int[] rowLengths, double prices) {
@@ -122,33 +114,21 @@ public class Auditorium implements AuditoriumInterface {
             }
         }
 
-	movie = "";
-
     }
 
     public Auditorium(String[][] seats, double prices) {
-        this.seats = seats;
+        this.seats = new String[seats.length][];
+        this.seatPrices = new double[seats.length][];
+
 
         for (int i = 0; i < seats.length; i++) {
-            for (int j = 0; j < seats[i].length; j++) {
-                seats[i][j] = "empty";
-            }
+
+                this.seats[i] = new String[seats[i].length];
+                Arrays.fill(this.seats[i], "empty");
+
+                this.seatPrices[i] = new double[seats[i].length];
+                Arrays.fill(this.seatPrices[i], prices);
         }
-
-        seatPrices = new double[this.seats.length][];
-
-        for (int i = 0; i < this.seats.length; i++) {
-
-            if (this.seats[i] != null) {
-                seatPrices[i] = new double[seats[i].length];
-                Arrays.fill(seatPrices[i], prices);
-
-            } else {
-                seatPrices[i] = null;
-            }
-        }
-
-	movie = "";
     }
 
     public Auditorium(int rows, int cols, double prices) {
@@ -164,20 +144,6 @@ public class Auditorium implements AuditoriumInterface {
                 seatPrices[i][j] = prices;
             }
         }
-
-	movie = "";
-    }
-
-    public Auditorium(int rows, int cols, double price, String movie, LocalDateTime showingTime) {
-        this(rows, cols, price);
-	this.movie = movie;
-        this.showingTime = showingTime;
-    }
-
-    public Auditorium(int[] rowLengths, double price, String movie, LocalDateTime showingTime) {
-        this(rowLengths, price);  // existing jagged constructor
-        this.movie = movie;
-        this.showingTime = showingTime;
     }
 
 
@@ -187,12 +153,45 @@ public class Auditorium implements AuditoriumInterface {
 
     @Override
     public String[][] getSeats() {
-        return seats;
+        String[][] copy = new String[this.seats.length][];
+        for (int i = 0; i < this.seats.length; i++) {
+                copy[i] = Arrays.copyOf(this.seats[i], this.seats[i].length);
+        }
+        return copy;
     }
 
     @Override
     public double[][] getSeatPrices() {
-        return seatPrices;
+        double[][] copy = new double[this.seatPrices.length][];
+        for (int i = 0; i < this.seatPrices.length; i++) {
+                copy[i] = Arrays.copyOf(this.seatPrices[i], this.seatPrices[i].length);
+        }
+        return copy;
+    }
+
+    @Override
+    public int getRowNumber() {
+        return seats.length;
+    }
+
+    @Override
+    public int getColumnNumber() {
+        if (seats == null || seats.length == 0) {
+            return 0;
+        }
+
+        int maxCols = 0;
+
+        for (String[] row : seats) {
+            // 3. Check for null rows in the jagged array
+            if (row != null) {
+                if (row.length > maxCols) {
+                    maxCols = row.length;
+                }
+            }
+        }
+
+        return maxCols;
     }
 
     @Override
@@ -211,24 +210,51 @@ public class Auditorium implements AuditoriumInterface {
     }
 
     @Override
-    public void setSeats(String[][] seats) {
-        this.seats = seats;
+    public void setSeats(String[][] newSeats) {
+
+        this.seats = new String[newSeats.length][];
+        this.seatPrices = new double[newSeats.length][];
+
+
+        for (int i = 0; i < newSeats.length; i++) {
+
+            this.seats[i] = Arrays.copyOf(newSeats[i], newSeats[i].length);
+            this.seatPrices[i] = new double[newSeats[i].length];
+            Arrays.fill(this.seatPrices[i], 0.0); // Initialize to default
+
+        }
     }
+
 
     @Override
-    public void setSeatPrices(double[][] seatPrices) {
-        this.seatPrices = seatPrices;
+    public void setSeatPrices(double[][] newSeatPrices) {
+
+        this.seats = new String[newSeatPrices.length][];
+        this.seatPrices = new double[newSeatPrices.length][];
+
+
+        for (int i = 0; i < newSeatPrices.length; i++) {
+
+            this.seatPrices[i] = Arrays.copyOf(newSeatPrices[i], newSeatPrices[i].length);
+
+            this.seats[i] = new String[newSeatPrices[i].length];
+            Arrays.fill(this.seats[i], "empty");
+
+        }
     }
 
+    //--Note that this will set SeatPrices to zero.
     @Override
     public void setSeats(int row, int col) {
         seats = new String[row][col];
+        seatPrices = new double[row][col];
+
+        for (int i = 0; i < row; i++) {
+            Arrays.fill(seats[i], "empty");
+            Arrays.fill(seatPrices[i], 0.0);
+        }
     }
 
-    @Override
-    public void setPrices(int row, int col) {
-        seatPrices = new double[row][col];
-    }
 
     @Override
     public void setShowingDate(LocalDateTime showingDate) {
@@ -261,159 +287,244 @@ public class Auditorium implements AuditoriumInterface {
     //--Updating the showing time--//
 
     @Override
-    public void updateShowingTime(LocalDateTime date) {
-        showingDate = date;
+    public void updateShowingTime(LocalDateTime newDate) {
+        if (newDate.isAfter(date)) {
+            showingDate = newDate;
+        } else {
+            System.out.println("updateShowingTime error: invalid date:" +
+                    "Date is before current time or exactly current time.");
+        }
+
     }
 
     @Override
     public void updateShowingTime() {
-        showingDate = LocalDateTime.now();
+        LocalDateTime newDate = LocalDateTime.now();
+        if (newDate.isAfter(date)) { // <--- ADDED: Check
+            showingDate = newDate;
+        } else {
+            System.out.println("updateShowingTime error: invalid date:" +
+                    "Current time is not after the set date.");
+        }
     }
 
     @Override
     public void updateShowingTime(int year, int month, int day, int hour, int minute) {
-        showingDate = LocalDateTime.of(year, month, day, hour, minute);
+        LocalDateTime newDate = LocalDateTime.of(year, month, day, hour, minute);
+        if (newDate.isAfter(date)) {
+            showingDate = newDate;
+        } else {
+            System.out.println("updateShowingTime error: invalid date:" +
+                    "Date is before current time or exactly current time.");
+        }
+
     }
 
 
-    // sets the price of a particular seat to the inputted price
+    //--Sets the price of a particular seat to the inputted price--//
     @Override
     public void setPrice(int row, int col, double price) {
         try {
-            seatPrices[row][col] = price;
+            if (price >= 0) {
+                seatPrices[row][col] = price;
+            } else {
+                System.out.println("setPrice error: Price cannot be negative.");
+            }
+
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Warning: row/col " + row + "," + col + " is out of bounds.");
+            System.out.println("setPrice: Warning: row/col " + row + "," + col + " is out of bounds.");
         }
 
     }
 
 
-    // Sets all seat prices to the inputted price.
-    // Iterates over each row and uses Arrays.fill() on double[] array.
+    //--Sets all seat prices to the inputted price--//
+    //-Iterates over each row and uses Arrays.fill() on double[] array-//
     @Override
     public void setAllPrices(double price) {
-        for (int i = 0; i < seatPrices.length; i++) {
-            if (seatPrices[i] != null) {
-                Arrays.fill(seatPrices[i], price);
+        if (price >= 0) {
+            for (double[] seatPrice : seatPrices) {
+                if (seatPrice != null) {
+                    Arrays.fill(seatPrice, price);
+                }
             }
+        } else {
+            System.out.println("setAllPrices error: price cannot be negative.");
         }
+
     }
 
 
-    // increases all prices by the inputted price
+    //--Increases all prices by the inputted price--//
     @Override
     public void increaseAllPrices(double price) {
         for (int i = 0; i < seatPrices.length; i++) {
             for (int j = 0; j < seatPrices[i].length; j++) {
-                seatPrices[i][j] += price;
+                if ((seatPrices[i][j] + price) >= 0) {
+                    seatPrices[i][j] += price;
+                } else {
+                    System.out.println("increaseAllPrices error: new price cannot be negative.");
+                }
             }
         }
     }
 
 
-    // multiplies prices by the inputted amount
+    //--Multiplies prices by the inputted amount--//
     @Override
     public void multiplyAllPrices(double price) {
         for (int i = 0; i < seatPrices.length; i++) {
             for (int j = 0; j < seatPrices[i].length; j++) {
-                seatPrices[i][j] *= price;
+                if ((seatPrices[i][j] * price) >= 0) {
+                    seatPrices[i][j] *= price;
+                } else {
+                    System.out.println("multiplyAllPrices error: new price cannot be negative.");
+                }
+
             }
         }
     }
 
-    // sets the prices of an entire row to the inputted price
+    //--Sets the prices of an entire row to the inputted price--//
     @Override
     public void setRowPrices(int row, double price) {
         try {
-            Arrays.fill(seatPrices[row], price);
+            if (price >= 0) {
+                Arrays.fill(seatPrices[row], price);
+            } else {
+                System.out.println("setRowPrices error: price cannot be negative.");
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("setRowPrices: Warning: row " +
+                    row + " is out of bounds.");
+        }
+    }
+
+    //--sets the prices of an entire column to the inputted price--//
+    @Override
+    public void setColPrices(int col, double price) {
+        for (int i = 0; i < seatPrices.length; i++) {
+            try {
+                if (price >= 0) {
+                    seatPrices[i][col] = price;
+                } else {
+                    System.out.println("setColPrices error: price cannot be negative.");
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.out.println("Warning: column " + col +
+                        " is out of bounds for column " + i + ".");
+            }
+        }
+    }
+
+    //--Increases the prices of a row by the price--//
+    @Override
+    public void increaseRowPrices(int row, double price) {
+        try {
+            for (int i = 0; i < seatPrices[row].length; i++) {
+                if ((seatPrices[row][i] + price) >= 0) {
+                    seatPrices[row][i] += price;
+                } else {
+                    System.out.println("increaseRowPrices error: new price cannot be negative.");
+                }
+            }
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Warning: row " + row + " is out of bounds.");
         }
     }
 
-    // sets the prices of an entire column to the inputted price
-    @Override
-    public void setColPrices(int col, double price) {
-        for (int i = 0; i < seatPrices.length; i++) {
-            try {
-                seatPrices[i][col] = price;
-            } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println("Warning: column " + col + " is out of bounds for row " + i + ".");
-            }
-        }
-    }
 
-    // increases the prices of a row by the price
-    @Override
-    public void increaseRowPrices(int row, double price) {
-        for (int i = 0; i < seatPrices[row].length; i++) {
-            try {
-                seatPrices[row][i] += price;
-            } catch (ArrayIndexOutOfBoundsException e) {
-            }
-
-        }
-    }
-
-    // multiplies the prices of a row by the given price
+    //--Multiplies the prices of a row by the given price--//
     @Override
     public void multiplyRowPrices(int row, double price) {
-        for (int i = 0; i < seatPrices[row].length; i++) {
-            try {
-                seatPrices[row][i] *= price;
-            } catch (ArrayIndexOutOfBoundsException e) {
+        try {
+            for (int i = 0; i < seatPrices[row].length; i++) {
+                if ((seatPrices[row][i] * price) >= 0) {
+                    seatPrices[row][i] *= price;
+                } else {
+                    System.out.println("multiplyRowPrices error: new price cannot be negative.");
+                }
             }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Warning: row " + row + " is out of bounds.");
         }
     }
 
-    // increases the prices of a col
+
+    //--Increases the prices of an entire column--//
     @Override
     public void increaseColPrices(int col, double price) {
         for (int i = 0; i < seatPrices.length; i++) {
             try {
-                seatPrices[i][col] += price;
+                if ((seatPrices[i][col] + price) >= 0) {
+                    seatPrices[i][col] += price;
+                } else {
+                    System.out.println("increaseColPrices error: new price cannot be negative for row " + i);
+                }
             } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println("Warning: column " + col + " is out of bounds for row " + i + ".");
+                System.out.println("Warning: column " + col
+                        + " is out of bounds for row " + i + ".");
             }
         }
     }
 
-    // multiplies the prices of a col by the given price
+    //--Multiplies the prices of a col by the given price--//
     @Override
     public void multiplyColPrices(int col, double price) {
         for (int i = 0; i < seatPrices.length; i++) {
             try {
-                seatPrices[i][col] *= price;
+                if ((seatPrices[i][col] * price) >= 0) {
+                    seatPrices[i][col] *= price;
+                } else {
+                    System.out.println("multiplyColPrices error: new price cannot be negative for row " + i);
+                }
             } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println("Warning: column " + col + " is out of bounds for row " + i + ".");
+                System.out.println("Warning: column " + col
+                        + " is out of bounds for row " + i + ".");
             }
         }
     }
 
-    //sets a seat to a user's name.
+    //--Sets a seat to a user's name--//
     @Override
     public boolean setReservation(String user, int row, int col) {
-        if (seats[row][col].equals("empty")) {
+        try {
 
-            seats[row][col] = user;
-            return true;
+            if (seats[row][col].equals("empty")) {
+                seats[row][col] = user;
+                return true;
+            } else {
+                return false;
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("setReservation: Warning: row " + row
+                    + " column " + col +
+                    " is out of bounds.");
+        }
+        return false;
+    }
 
-        } else {
+    //--Returns true if a seat is available--//
+    @Override
+    public boolean checkSeat(int row, int col) {
+        try {
+            return seats[row][col].equals("empty");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("checkSeat: Warning: row " + row
+                    + " column " + col +
+                    " is out of bounds.");
             return false;
         }
     }
 
-    //returns true if a seat is available
+
+    //--Returns true if a seat is valid--//
     @Override
-    public boolean checkSeat(int row, int col) {
-        return seats[row][col].equals("empty");
+    public boolean isValidSeat(int row, int col) {
+        if(row < 0 || row >= seats.length) return false;
+        if(seats[row] == null || col < 0 || col >= seats[row].length) return false;
+
+        return true;
     }
-
-	public boolean isValidSeat(int row, int col) {
-    if(row < 0 || row >= seats.length) return false;
-    if(seats[row] == null || col < 0 || col >= seats[row].length) return false;
-    return true;
-	}
-
 
 } //end class
