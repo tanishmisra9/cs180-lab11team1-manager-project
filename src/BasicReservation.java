@@ -91,7 +91,7 @@ public class BasicReservation implements Reservation, Serializable {
         BasicReservation other = (BasicReservation) o; //casting object to use getters
 
         if (    movie.equals(other.getMovie()) &&
-                date.equals(other.getDate()) &&
+                date.equals(other.getDateTime()) &&
                 row == other.getRow() &&
                 seat == other.getSeat()) {
             return true;
