@@ -1,9 +1,6 @@
 package src;
 
 import org.junit.jupiter.api.*;
-import src.ReservationClasses.BasicReservation;
-import src.ReservationClasses.Reservation;
-
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

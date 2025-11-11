@@ -1,12 +1,25 @@
+package src;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import src.Auditorium;
+
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
+
 /**
- * JUnit test cases for the Auditorium class.
+ * The JUnit LocalTest for Auditorium.
+ * 
+ *
+ * <p>Purdue University -- CS18000 -- Fall 2025</p>
+ *
+ * @author Logan Dalton
+ * @version Nov 10, 2025
  */
+
 public class AuditoriumLocalTest {
 
     private Auditorium rectAud; // A rectangular auditorium
@@ -134,16 +147,16 @@ public class AuditoriumLocalTest {
 
     @Test
     public void testGetSetShowingDate() {
-        LocalDateTime showDate = LocalDateTime.of(2025, 12, 25, 20, 0);
-        rectAud.setShowingDate(showDate);
-        assertEquals(showDate, rectAud.getShowingDate());
+        LocalDateTime showTime = LocalDateTime.of(2025, 12, 25, 20, 0);
+        rectAud.setShowingTime(showTime);
+        assertEquals(showTime, rectAud.getShowingTime());
     }
 
     @Test
     public void testSetShowingDate_Int() {
         LocalDateTime showDate = LocalDateTime.of(2025, 10, 31, 19, 0);
         rectAud.setShowingDate(2025, 10, 31, 19, 0);
-        assertEquals(showDate, rectAud.getShowingDate());
+        assertEquals(showDate, rectAud.getShowingTime());
     }
 
     @Test
@@ -205,7 +218,7 @@ public class AuditoriumLocalTest {
         LocalDateTime newShowTime = LocalDateTime.of(2025, 1, 1, 13, 0);
         rectAud.updateTime(currentDate);
         rectAud.updateShowingTime(newShowTime);
-        assertEquals(newShowTime, rectAud.getShowingDate());
+        assertEquals(newShowTime, rectAud.getShowingTime());
     }
 
     @Test
@@ -213,10 +226,10 @@ public class AuditoriumLocalTest {
         LocalDateTime currentDate = LocalDateTime.of(2025, 1, 1, 12, 0);
         LocalDateTime newShowTime = LocalDateTime.of(2025, 1, 1, 11, 0); // Before current
         rectAud.updateTime(currentDate);
-        rectAud.setShowingDate(null); //no showing date
+        rectAud.setShowingTime(null); //no showing date
 
         rectAud.updateShowingTime(newShowTime);
-        assertNull(rectAud.getShowingDate()); // expected to fail to update
+        assertNull(rectAud.getShowingTime()); // expected to fail to update
     }
 
     @Test
@@ -226,7 +239,7 @@ public class AuditoriumLocalTest {
         rectAud.updateTime(currentDate);
 
         rectAud.updateShowingTime(2025, 1, 2, 10, 0);
-        assertEquals(newShowTime, rectAud.getShowingDate());
+        assertEquals(newShowTime, rectAud.getShowingTime());
     }
 
     //--price changes tests---//
