@@ -2,7 +2,7 @@ package src.ReservationClasses;
 import src.UserClasses.User;
 
 import java.io.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class ReservationDatabase implements Serializable {
@@ -37,13 +37,25 @@ public class ReservationDatabase implements Serializable {
 	auditoriums.add(auditorum);
     }
 
-    public synchronized boolean reserve(User user, Reservation r, Auditorium a) {
+    public synchronized boolean reserve(User user, Reservation r) {
+	Auditorium target = null;
+	for(Auditorium a: auditoriums) {
+		if (a.getMovie().equals(r.getMovie()) && a.getShowingDate().equals(r.getDateTime())) {
+			target = a;
+			break;
+		}
+	}
+	
+	if (target == null) {
+		return false;
+	}
+
 	int row = r.getRow() - 1;
         int col = r.getSeat() - 1;
 
-        if(!a.isValidSeat(row, col) || !a.checkSeat(row, col)) return false;
+        if(!target.isValidSeat(row, col) || !target.checkSeat(row, col)) return false;
 
-        a.setReservation(user.getName(), row, col);
+        a.setReservation(user.getUsername(), row, col);
         reservationMap.computeIfAbsent(user, k -> new ArrayList<>()).add(r);
 
         return true;

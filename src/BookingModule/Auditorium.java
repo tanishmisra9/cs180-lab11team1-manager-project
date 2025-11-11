@@ -21,7 +21,7 @@ public class Auditorium {
 
     private LocalDateTime date = LocalDateTime.now();
     private LocalDateTime showingDate;
-
+    private String movie; 
 
     //----CONSTRUCTORS----//
 
@@ -48,7 +48,8 @@ public class Auditorium {
                 seatPrices[i][j] = 0.00;
             }
         }
-
+        
+	movie = "";
     }
 
     public Auditorium(String[][] seats) {
@@ -72,6 +73,8 @@ public class Auditorium {
             }
 
         }
+
+	movie = "";
     }
 
     public Auditorium(int rows, int cols) {
@@ -87,6 +90,8 @@ public class Auditorium {
                 seatPrices[i][j] = 0.00;
             }
         }
+
+	movie = "";
     }
 
     public Auditorium(int[] rowLengths, double prices) {
@@ -113,6 +118,8 @@ public class Auditorium {
             }
         }
 
+	movie = "";
+
     }
 
     public Auditorium(String[][] seats, double prices) {
@@ -136,6 +143,8 @@ public class Auditorium {
                 seatPrices[i] = null;
             }
         }
+
+	movie = "";
     }
 
     public Auditorium(int rows, int cols, double prices) {
@@ -151,6 +160,20 @@ public class Auditorium {
                 seatPrices[i][j] = prices;
             }
         }
+
+	movie = "";
+    }
+
+    public Auditorium(int rows, int cols, double price, String movie, LocalDateTime showingTime) {
+        this(rows, cols, price);
+	this.movie = movie;
+        this.showingTime = showingTime;
+    }
+
+    public Auditorium(int[] rowLengths, double price, String movie, LocalDateTime showingTime) {
+        this(rowLengths, price);  // existing jagged constructor
+        this.movie = movie;
+        this.showingTime = showingTime;
     }
 
 
