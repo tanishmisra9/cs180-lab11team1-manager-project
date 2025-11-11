@@ -5,7 +5,7 @@
 
 ## Submissions
 
-[STUDENT NAME] - Submitted Phase 1 Vocareum Workspace.
+Ved Joshi - Submitted Phase 1 Vocareum Workspace.
 
 
 ## Class descriptions
