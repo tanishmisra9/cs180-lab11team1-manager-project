@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
-import ReservationClasses.BasicReservation;
-import ReservationClasses.Reservation;
+import src.ReservationClasses.BasicReservation;
+import src.ReservationClasses.Reservation;
+import java.time.LocalDateTime;
 
 public class BasicUser implements User {
 
@@ -93,7 +94,7 @@ public class BasicUser implements User {
      * Makes a transaction and reserves seats for 'numPeople' individuals.
      * Each reservation is for one person.
      */
-    public boolean addReservation(String movie, String showTime, LocalDate date, int startRow, int startSeat, int numPeople, double reservationFee) {
+    public boolean addReservation(String movie, String showTime, LocalDateTime date, int startRow, int startSeat, int numPeople, double reservationFee) {
         lock.lock();
         try {
             if (creditCard == null) {
@@ -119,7 +120,7 @@ public class BasicUser implements User {
             for (int i = 0; i < numPeople; i++) {
                 int row = startRow;
                 int seat = startSeat + i; // seats next to each other
-                Reservation r = new BasicReservation(username, showTime, movie, date, row, seat);
+                BasicReservation r = new BasicReservation(username, movie, date, row, seat);
                 newReservations.add(r);
             }
 
@@ -182,6 +183,7 @@ public class BasicUser implements User {
     public List<String> getTransactionHistory() {
         return List.copyOf(transactionHistory);
     }
+
     public CreditCard getCreditCard() {
         lock.lock();
         try {
@@ -190,6 +192,7 @@ public class BasicUser implements User {
             lock.unlock();
         }
     }
+
     public void setCreditCard(CreditCard card) {
         lock.lock();
         try {
@@ -199,6 +202,7 @@ public class BasicUser implements User {
         }
     }
 
+    
     public boolean upgradeUser(UserType newType, double cost) {
         lock.lock();
         try {
