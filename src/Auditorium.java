@@ -245,6 +245,10 @@ public class Auditorium implements AuditoriumInterface {
         return showingDate;
     }
 
+	 public LocalDateTime getShowingTime() {
+        return showingTime;
+    }
+
     @Override
     public LocalDateTime getDate() {
         return date;
