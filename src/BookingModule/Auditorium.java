@@ -23,6 +23,7 @@ public class Auditorium implements AuditoriumInterface {
     private String[][] seats;
     private double[][] seatPrices;
 
+    private String showingName = "";
     private LocalDateTime date = LocalDateTime.now();
     private LocalDateTime showingDate;
 
@@ -153,6 +154,16 @@ public class Auditorium implements AuditoriumInterface {
 
     //--Getters/Setters--//
 
+    @Override
+    public String getShowingName () {
+        return showingName;
+    }
+    
+    @Override
+    public void setShowingName (String newName) {
+        showingName = newName;
+    }
+    
     @Override
     public String[][] getSeats() {
         String[][] copy = new String[this.seats.length][];
