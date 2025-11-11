@@ -25,7 +25,7 @@ public class Auditorium implements AuditoriumInterface {
 
     private String showingName = "";
     private LocalDateTime date = LocalDateTime.now();
-    private LocalDateTime showingDate;
+    private LocalDateTime showingTime;
 
 
     //----CONSTRUCTORS----//
@@ -163,7 +163,7 @@ public class Auditorium implements AuditoriumInterface {
     public Auditorium(int[] rowLengths, double price, String movie, LocalDateTime showingTime) {
         this(rowLengths, price);  // existing jagged constructor
         this.showingName = movie;
-        this.showingDate = showingTime;
+        this.showingTime = showingTime;
     }
 
 
@@ -192,7 +192,7 @@ public class Auditorium implements AuditoriumInterface {
     }
     
     public LocalDateTime getMovieDate() {
-        return showingDate;
+        return showingTime;
     }
     
 
@@ -241,11 +241,11 @@ public class Auditorium implements AuditoriumInterface {
     }
 
     @Override
-    public LocalDateTime getShowingDate() {
-        return showingDate;
+    public LocalDateTime getShowingTime() {
+        return showingTime;
     }
 
-	 public LocalDateTime getShowingTime() {
+    public LocalDateTime getShowingDate() {
         return showingTime;
     }
 
@@ -307,13 +307,13 @@ public class Auditorium implements AuditoriumInterface {
 
 
     @Override
-    public void setShowingDate(LocalDateTime showingDate) {
-        this.showingDate = showingDate;
+    public void setShowingTime(LocalDateTime showingTime) {
+        this.showingTime = showingTime;
     }
 
     @Override
     public void setShowingDate(int year, int month, int day, int hour, int minute) {
-        showingDate = LocalDateTime.of(year, month, day, hour, minute);
+        showingTime = LocalDateTime.of(year, month, day, hour, minute);
     }
 
 
@@ -339,7 +339,7 @@ public class Auditorium implements AuditoriumInterface {
     @Override
     public void updateShowingTime(LocalDateTime newDate) {
         if (newDate.isAfter(date)) {
-            showingDate = newDate;
+            showingTime = newDate;
         } else {
             System.out.println("updateShowingTime error: invalid date:" +
                     "Date is before current time or exactly current time.");
@@ -351,7 +351,7 @@ public class Auditorium implements AuditoriumInterface {
     public void updateShowingTime() {
         LocalDateTime newDate = LocalDateTime.now();
         if (newDate.isAfter(date)) { // <--- ADDED: Check
-            showingDate = newDate;
+            showingTime = newDate;
         } else {
             System.out.println("updateShowingTime error: invalid date:" +
                     "Current time is not after the set date.");
@@ -362,7 +362,7 @@ public class Auditorium implements AuditoriumInterface {
     public void updateShowingTime(int year, int month, int day, int hour, int minute) {
         LocalDateTime newDate = LocalDateTime.of(year, month, day, hour, minute);
         if (newDate.isAfter(date)) {
-            showingDate = newDate;
+            showingTime = newDate;
         } else {
             System.out.println("updateShowingTime error: invalid date:" +
                     "Date is before current time or exactly current time.");
