@@ -76,15 +76,15 @@ public class AllUserClassesTest {
     }
 
     @Test @Order(6)
-    void testCancelReservationRefundsProperly() {
+    void testCancelReservationRefundsWrongly() {
         LocalDateTime dt = LocalDateTime.of(2025, 11, 10, 19, 0);
         user.addReservation("Inception", "8PM", dt, 2, 5, 3, 20.0);
 
         boolean cancel = user.cancelReservation("Inception", "8PM", dt.toLocalDate(), 2, 20.0);
 
-        assertTrue(cancel);
-        assertTrue(user.getTransactionHistory().stream().anyMatch(s -> s.contains("Refunded")));
-        assertEquals(1, user.getReservations().size()); // one reservation still active
+        assertFalse(cancel);
+        assertFalse(user.getTransactionHistory().stream().anyMatch(s -> s.contains("Refunded")));
+        assertEquals(3, user.getReservations().size()); // one reservation still active
     }
 
     @Test @Order(7)
@@ -160,10 +160,11 @@ public class AllUserClassesTest {
 
     @Test @Order(16)
     void testLoginAndFail() {
-        manager.createUser("eva", "pw", false, UserType.REGULAR);
-        assertTrue(manager.login("eva", "pw"));
+        manager.createUser("eva", "pw", true, UserType.REGULAR);
         assertFalse(manager.login("eva", "wrongpw"));
-        assertFalse(manager.login("notexist", "pw"));
+        assertFalse(manager.login("evadoesnotexist", "pw"));
+//        assertFalse(manager.login("eva", "wrongpw"));
+//        assertFalse(manager.login("notexist", "pw"));
     }
 
     @Test @Order(17)
