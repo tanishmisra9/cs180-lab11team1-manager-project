@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class UserAccountManager {
 
-
+    // pushed changes that were taking forever
     private final ConcurrentHashMap<String, BasicUser> users = new ConcurrentHashMap<>();
 
     /**

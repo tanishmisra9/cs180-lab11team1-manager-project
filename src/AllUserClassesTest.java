@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-// Changes succesfully pushed
+// pushed changes that were taking forever
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AllUserClassesTest {
 
