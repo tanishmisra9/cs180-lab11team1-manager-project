@@ -11,7 +11,6 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 
 import java.io.*;
-import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -25,7 +24,7 @@ import static org.junit.Assert.*;
  */
 
 @RunWith(Enclosed.class)
-public class RunLocalTest {
+public class ReservationTest {
     public static void main(String[] args) {
         Result result = JUnitCore.runClasses(TestCase.class);
         if (result.wasSuccessful()) {
