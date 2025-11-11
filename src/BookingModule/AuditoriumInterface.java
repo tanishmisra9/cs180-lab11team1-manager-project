@@ -22,6 +22,20 @@ public interface AuditoriumInterface {
     //----Getters/Setters----//
 
     /**
+     * Gets the String representing the showing name.
+     * @return the name of the showing.
+     */
+    String getShowingName();
+
+
+    /**
+     * Sets the String showingName to the newName.
+     * This changes the name of the showing.
+     * @param newName the new name of the showing.
+     */
+    void setShowingName (String newName);
+
+    /**
      //Gets the 2D array representing the seats and their reservation status.
      //A seat is "empty" if empty.
      //A seat is the User's name if filled.
