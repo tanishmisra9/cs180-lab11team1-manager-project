@@ -240,7 +240,6 @@ public class Auditorium implements AuditoriumInterface {
         return maxCols;
     }
 
-    @Override
     public LocalDateTime getShowingTime() {
         return showingTime;
     }
@@ -307,7 +306,7 @@ public class Auditorium implements AuditoriumInterface {
 
 
     @Override
-    public void setShowingTime(LocalDateTime showingTime) {
+    public void setShowingDate(LocalDateTime showingTime) {
         this.showingTime = showingTime;
     }
 
@@ -315,6 +314,16 @@ public class Auditorium implements AuditoriumInterface {
     public void setShowingDate(int year, int month, int day, int hour, int minute) {
         showingTime = LocalDateTime.of(year, month, day, hour, minute);
     }
+
+    public void setShowingTime(LocalDateTime showingTime) {
+        this.showingTime = showingTime;
+    }
+
+    public void setShowingTime(int year, int month, int day, int hour, int minute) {
+        showingTime = LocalDateTime.of(year, month, day, hour, minute);
+    }
+
+
 
 
     //--Updating the current time--//
