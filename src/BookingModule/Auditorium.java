@@ -409,5 +409,11 @@ public class Auditorium implements AuditoriumInterface {
         return seats[row][col].equals("empty");
     }
 
+	public boolean isValidSeat(int row, int col) {
+    if(row < 0 || row >= seats.length) return false;
+    if(seats[row] == null || col < 0 || col >= seats[row].length) return false;
+    return true;
+	}
+
 
 } //end class
