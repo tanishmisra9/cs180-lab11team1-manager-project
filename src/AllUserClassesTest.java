@@ -17,7 +17,7 @@ public class AllUserClassesTest {
 
     @BeforeEach
     void setup() {
-        user = new BasicUser("alice", "password123", false);
+        user = new BasicUser("alice", "password123", false, UserType.REGULAR);
         card = new CreditCard("Alice Smith", "1234567812345678", "12/30", "123");
         user.setCreditCard(card);
         manager = new UserAccountManager();
@@ -67,7 +67,7 @@ public class AllUserClassesTest {
 
     @Test @Order(5)
     void testAddReservationNoCreditCardFails() {
-        BasicUser noCardUser = new BasicUser("bob", "secret", false);
+        BasicUser noCardUser = new BasicUser("bob", "secret", false,  UserType.REGULAR);
         boolean success = noCardUser.addReservation(
                 "Matrix", "6PM",
                 LocalDateTime.now(), 1, 1, 2, 12.0
@@ -97,7 +97,7 @@ public class AllUserClassesTest {
 
     @Test @Order(8)
     void testUpgradeUserFailsWithoutCard() {
-        BasicUser noCard = new BasicUser("charlie", "abc", false);
+        BasicUser noCard = new BasicUser("charlie", "abc", false,   UserType.REGULAR);
         boolean result = noCard.upgradeUser(UserType.PREMIUM, 20.0);
         assertFalse(result);
     }

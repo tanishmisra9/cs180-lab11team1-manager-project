@@ -27,6 +27,18 @@ public class BasicUser implements User {
         this.isAdmin = isAdmin;
         this.type = type;
     }
+    public BasicUser(String username, String password, boolean isAdmin) {
+        this.username = username;
+        this.password = hashPassword(password);
+        this.isAdmin = isAdmin;
+        this.type = UserType.REGULAR;
+    }
+    public BasicUser() {
+        this.username = "default";
+        this.password = hashPassword("password");
+        this.isAdmin = false;
+        this.type = UserType.REGULAR;
+    }
 
     // Utility: SHA-256 password hashing
     private String hashPassword(String password) {
@@ -52,11 +64,19 @@ public class BasicUser implements User {
 
     @Override
     public double getPriceMultiplier() {
-        return switch (type) {
-            case PREMIUM -> 0.9;
-            case VIP -> 0.75;
-            default -> 1.0;
-        };
+        double multiplier = 1.0;
+        switch (type) {
+            case PREMIUM:
+                multiplier = 0.9;
+                break;
+            case VIP:
+                multiplier = 0.75;
+                break;
+            default:
+                multiplier = 1.0;
+                break;
+        }
+        return multiplier;
     }
 
     @Override

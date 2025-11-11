@@ -32,11 +32,19 @@ public class UserAccountManager {
                 boolean isAdmin = Boolean.parseBoolean(parts[2]);
                 int typeCode = Integer.parseInt(parts[3]);
 
-                UserType type = switch (typeCode) {
-                    case 1 -> UserType.PREMIUM;
-                    case 2 -> UserType.VIP;
-                    default -> UserType.REGULAR;
-                };
+                UserType type;
+                switch (typeCode) {
+                    case 1:
+                        type = UserType.PREMIUM;
+                        break;
+                    case 2:
+                        type = UserType.VIP;
+                        break;
+                    default:
+                        type = UserType.REGULAR;
+                        break;
+                }
+
 
                 BasicUser user = new BasicUser(username, password, isAdmin, type);
                 user.upgradeUser(type, 0.0); // Set user tier without cost
@@ -56,12 +64,20 @@ public class UserAccountManager {
     public void saveToFile(String filename) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
             for (User user : users.values()) {
-                if (user instanceof BasicUser b) {
-                    int typeCode = switch (b.getType()) {
-                        case PREMIUM -> 1;
-                        case VIP -> 2;
-                        default -> 0;
-                    };
+                if (user instanceof BasicUser) {
+                    BasicUser b = new BasicUser();
+                    int typeCode = 0;
+                    if (b.getType() == UserType.VIP) {
+                        typeCode = 2;
+                    }
+                    else if (b.getType() == UserType.PREMIUM) {
+                        typeCode = 1;
+                    }
+                    else{
+                        typeCode = 0;
+
+                    }
+
 
                     bw.write(String.format(
                         "%s,%s,%b,%d%n",
