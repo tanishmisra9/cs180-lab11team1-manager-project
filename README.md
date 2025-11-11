@@ -1,8 +1,5 @@
 # CS180 Lab 11 Team 1 Movie Theater Project
 
-## Compiling and Running
-
-
 ## Submissions
 
 Ved Joshi - Submitted Phase 1 Vocareum Workspace.
