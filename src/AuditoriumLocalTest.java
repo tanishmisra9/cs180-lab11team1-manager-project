@@ -2,7 +2,7 @@ package src;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import src.Auditorium;
+//import src.Auditorium;
 
 import java.time.LocalDateTime;
 
