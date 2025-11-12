@@ -53,13 +53,13 @@ public class AllUserClassesTest {
     @Test @Order(4)
     void testAddReservationSuccess() {
         boolean success = user.addReservation(
-                "Interstellar", "7PM",
+                "Interstellar",
                 LocalDateTime.of(2025, 11, 10, 19, 0),
                 3, 10, 2, 15.0
         );
 
         assertTrue(success);
-        List<Reservation> reservations = user.getReservations();
+        List<BasicReservation> reservations = user.getReservations();
         assertEquals(2, reservations.size());
         assertEquals("Interstellar", reservations.get(0).getMovie());
         assertTrue(user.getTransactionHistory().get(0).contains("Charged $"));
@@ -69,7 +69,7 @@ public class AllUserClassesTest {
     void testAddReservationNoCreditCardFails() {
         BasicUser noCardUser = new BasicUser("bob", "secret", false,  UserType.REGULAR);
         boolean success = noCardUser.addReservation(
-                "Matrix", "6PM",
+                "Matrix",
                 LocalDateTime.now(), 1, 1, 2, 12.0
         );
         assertFalse(success);
@@ -78,7 +78,7 @@ public class AllUserClassesTest {
     @Test @Order(6)
     void testCancelReservationRefundsWrongly() {
         LocalDateTime dt = LocalDateTime.of(2025, 11, 10, 19, 0);
-        user.addReservation("Inception", "8PM", dt, 2, 5, 3, 20.0);
+        user.addReservation("Inception", dt, 2, 5, 3, 20.0);
 
         boolean cancel = user.cancelReservation("Inception", "8PM", dt.toLocalDate(), 2, 20.0);
 

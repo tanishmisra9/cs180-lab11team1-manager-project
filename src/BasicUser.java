@@ -1,5 +1,6 @@
 package src;
 
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
@@ -8,17 +9,18 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 // pushed changes that were taking forever
-public class BasicUser implements User {
+public class BasicUser implements User, Serializable {
 
     private final String username;
     private String password;
     private boolean isAdmin;
     private UserType type;
-    private CreditCard creditCard;
+    private transient CreditCard creditCard;
 
-    private final List<Reservation> reservations = new CopyOnWriteArrayList<>();
+    private final List<BasicReservation> reservations = new CopyOnWriteArrayList<>();
     private final List<String> transactionHistory = new CopyOnWriteArrayList<>();
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -113,7 +115,7 @@ public class BasicUser implements User {
      * Makes a transaction and reserves seats for 'numPeople' individuals.
      * Each reservation is for one person.
      */
-    public boolean addReservation(String movie, String showTime, LocalDateTime date, int startRow, int startSeat, int numPeople, double reservationFee) {
+    public boolean addReservation(String movie, LocalDateTime date, int startRow, int startSeat, int numPeople, double reservationFee) {
         lock.lock();
         try {
             if (creditCard == null) {
@@ -135,7 +137,7 @@ public class BasicUser implements User {
             transactionHistory.add(chargeMessage);
 
             // Create one reservation per person
-            List<Reservation> newReservations = new ArrayList<>();
+            List<BasicReservation> newReservations = new ArrayList<>();
             for (int i = 0; i < numPeople; i++) {
                 int row = startRow;
                 int seat = startSeat + i; // seats next to each other
@@ -191,7 +193,7 @@ public class BasicUser implements User {
         }
     }
 
-    public List<Reservation> getReservations() {
+    public List<BasicReservation> getReservations() {
         return List.copyOf(reservations);
     }
 
@@ -256,4 +258,19 @@ public class BasicUser implements User {
             (creditCard != null ? creditCard.getMaskedNumber() : "None")
         );
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BasicUser)) return false;
+        BasicUser u = (BasicUser) o;
+        return getUsername().equals(u.getUsername());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUsername());
+    }
+
+
 }

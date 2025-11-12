@@ -14,6 +14,7 @@ public class BasicReservation implements Reservation, Serializable {
     private int row;
     private int seat;
     private boolean active = true;
+    private int numPeople;
 
     //constructor
     public BasicReservation(String user, String movie, LocalDateTime date, int row, int seat) {
@@ -39,6 +40,33 @@ public class BasicReservation implements Reservation, Serializable {
         this.date = date;
         this.row = row;
         this.seat = seat;
+        numPeople = 1;
+    }
+
+    public BasicReservation(String user, String movie, LocalDateTime date, int row, int seat, int people) {
+
+        //check for empty strings
+        if (user == null || user.trim().isEmpty()) {
+            throw new IllegalArgumentException("User can't be empty.");
+        }
+        if (movie == null || movie.trim().isEmpty()) {
+            throw new IllegalArgumentException("Movie can't be empty.");
+        }
+        if (date == null) {
+            throw new IllegalArgumentException("Reservation date can't be null.");
+        }
+
+        //check for illegal nums
+        if (row < 1 || seat < 1) {
+            throw new IllegalArgumentException("Row and seat numbers must be positive.");
+        }
+
+        this.user = user;
+        this.movie = movie;
+        this.date = date;
+        this.row = row;
+        this.seat = seat;
+        numPeople = people;
     }
 
     // Identifying and linking
@@ -79,6 +107,8 @@ public class BasicReservation implements Reservation, Serializable {
     public void cancel() {
         active = false;
     }
+
+    public int getPeople() {return numPeople;}
 
     //Overrides .equals() to check if two people are trying to reserve the same time, seat, and movie
     @Override
