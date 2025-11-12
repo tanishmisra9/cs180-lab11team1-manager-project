@@ -1,5 +1,8 @@
 package src;
 
+import java.awt.*;
+import java.io.Serializable;
+
 /**
  * Represents a user's credit card used for transactions.
  */

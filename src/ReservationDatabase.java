@@ -7,7 +7,8 @@ import java.util.*;
 public class ReservationDatabase implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Map<User, List<Reservation>> reservationMap = new HashMap<>();
+    //private Map<User, List<Reservation>> reservationMap = new HashMap<>();
+    private List<BasicUser> users = new ArrayList<>();
     private List<Auditorium> auditoriums = new ArrayList<>();
 
     public static ReservationDatabase loadDatabase() { // call on server startup 
@@ -28,15 +29,20 @@ public class ReservationDatabase implements Serializable {
         }
     }
 
-    public List<Reservation> getReservations(User u) {
-        return reservationMap.getOrDefault(u, new ArrayList<>());
+    public List<BasicReservation> getReservations(BasicUser u) {
+        for(BasicUser it: users) {
+            if (u.equals(it)) return it.getReservations();
+        }
+        return null;
     }
 
     public void addAuditorium(Auditorium auditorum) {
 	auditoriums.add(auditorum);
     }
 
-    public synchronized boolean reserve(User user, Reservation r) {
+    public void addUser(BasicUser user) { users.add(user);}
+
+    public synchronized boolean reserve(BasicUser user, BasicReservation r) {
 	Auditorium target = null;
 	for(Auditorium a: auditoriums) {
 		if (a.getShowingName().equals(r.getMovie()) && a.getShowingDate().isEqual(r.getDateTime())) {
@@ -49,14 +55,16 @@ public class ReservationDatabase implements Serializable {
 		return false;
 	}
 
-	int row = r.getRow() - 1;
+	    int row = r.getRow() - 1;
         int col = r.getSeat() - 1;
 
-        if(!target.isValidSeat(row, col) || !target.checkSeat(row, col)) return false;
+        if(!target.isValidSeat(row, col) || !target.checkSeat(row, col)) {
+            return false;
+        }
 
         target.setReservation(user.getUsername(), row, col);
-        reservationMap.computeIfAbsent(user, k -> new ArrayList<>()).add(r);
-
+        //reservationMap.computeIfAbsent(user, k -> new ArrayList<>()).add(r);
+        user.addReservation(r.getMovie(), r.getDateTime(), r.getRow(), r.getSeat(), r.getPeople(), target.getSeatPrice(row, col));
         return true;
     }
 

@@ -1,5 +1,6 @@
 package src;
 
+import java.io.Serializable;
 import java.time.*;
 import java.util.Arrays;
 
@@ -17,7 +18,7 @@ import java.util.Arrays;
 
 
 //TODO JUnit testcases
-public class Auditorium implements AuditoriumInterface {
+public class Auditorium implements AuditoriumInterface, Serializable {
 
     //----FIELDS----//
     private String[][] seats;
@@ -213,6 +214,10 @@ public class Auditorium implements AuditoriumInterface {
             copy[i] = Arrays.copyOf(this.seatPrices[i], this.seatPrices[i].length);
         }
         return copy;
+    }
+
+    public double getSeatPrice(int row, int col) {
+        return seatPrices[row][col];
     }
 
     @Override

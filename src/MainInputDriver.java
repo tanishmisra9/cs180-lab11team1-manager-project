@@ -1,3 +1,4 @@
+/*
 package src;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import src.UserType;
  * A small interactive CLI to exercise the manager and reservation system.
  * Supports: register, login, add auditorium (admin), make reservation, view reservations, save & exit.
  */
-public class MainInputDriver {
+/*public class MainInputDriver {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
@@ -179,3 +180,4 @@ public class MainInputDriver {
         in.close();
     }
 }
+*/
