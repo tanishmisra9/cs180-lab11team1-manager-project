@@ -1,13 +1,22 @@
 package src;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Basic implementation of a reservation.
+ *
+ * <p>Purdue University -- CS18000 -- Fall 2025</p>
+ *
+ * @author Ved Joshi
+ * @version Nov 19, 2025
+ */
 public class BasicReservation implements Reservation, Serializable {
-    //fields
+    private static final long serialVersionUID = 1L;
+
+    // fields
     private String user;
     private String movie;
     private LocalDateTime date;
@@ -16,10 +25,10 @@ public class BasicReservation implements Reservation, Serializable {
     private boolean active = true;
     private int numPeople;
 
-    //constructor
+    // constructor
     public BasicReservation(String user, String movie, LocalDateTime date, int row, int seat) {
 
-        //check for empty strings
+        // check for empty strings
         if (user == null || user.trim().isEmpty()) {
             throw new IllegalArgumentException("User can't be empty.");
         }
@@ -30,9 +39,9 @@ public class BasicReservation implements Reservation, Serializable {
             throw new IllegalArgumentException("Reservation date can't be null.");
         }
 
-        //check for illegal nums
+        // check for illegal nums
         if (row < 1 || seat < 1) {
-            throw new IllegalArgumentException("Row and seat numbers must be positive.");
+            throw new IllegalArgumentException("Row and seat numbers must be positive. ");
         }
 
         this.user = user;
@@ -45,7 +54,7 @@ public class BasicReservation implements Reservation, Serializable {
 
     public BasicReservation(String user, String movie, LocalDateTime date, int row, int seat, int people) {
 
-        //check for empty strings
+        // check for empty strings
         if (user == null || user.trim().isEmpty()) {
             throw new IllegalArgumentException("User can't be empty.");
         }
@@ -56,7 +65,7 @@ public class BasicReservation implements Reservation, Serializable {
             throw new IllegalArgumentException("Reservation date can't be null.");
         }
 
-        //check for illegal nums
+        // check for illegal nums
         if (row < 1 || seat < 1) {
             throw new IllegalArgumentException("Row and seat numbers must be positive.");
         }
@@ -71,7 +80,9 @@ public class BasicReservation implements Reservation, Serializable {
 
     // Identifying and linking
     @Override
-    public String getUser() {return user;}     // who booked the reservation
+    public String getUser() {
+        return user; // who booked the reservation
+    }
 
     @Override
     public String getShowtime() {
@@ -80,7 +91,9 @@ public class BasicReservation implements Reservation, Serializable {
 
     // Movie and scheduling
     @Override
-    public String getMovie() {return movie;}
+    public String getMovie() {
+        return movie;
+    }
 
     @Override
     public LocalDate getDate() {
@@ -88,14 +101,20 @@ public class BasicReservation implements Reservation, Serializable {
     }
 
     @Override
-    public LocalDateTime getDateTime() {return date;}
+    public LocalDateTime getDateTime() {
+        return date;
+    }
 
     // Seating info
     @Override
-    public int getRow() {return row;}
+    public int getRow() {
+        return row;
+    }
 
     @Override
-    public int getSeat() {return seat;}
+    public int getSeat() {
+        return seat;
+    }
 
     // Status and actions
     @Override
@@ -108,9 +127,11 @@ public class BasicReservation implements Reservation, Serializable {
         active = false;
     }
 
-    public int getPeople() {return numPeople;}
+    public int getPeople() {
+        return numPeople;
+    }
 
-    //Overrides .equals() to check if two people are trying to reserve the same time, seat, and movie
+    // Overrides .equals() to check if two people are trying to reserve the same time, seat, and movie
     @Override
     public boolean equals(Object o) {
         if (this == o) { //quick check for equality
@@ -118,9 +139,10 @@ public class BasicReservation implements Reservation, Serializable {
         } else if (o == null) {
             return false;
         }
-        BasicReservation other = (BasicReservation) o; //casting object to use getters
 
-        if (    movie.equals(other.getMovie()) &&
+        BasicReservation other = (BasicReservation) o; // casting object to use getters
+
+        if (movie.equals(other.getMovie()) &&
                 date.equals(other.getDateTime()) &&
                 row == other.getRow() &&
                 seat == other.getSeat()) {
@@ -130,7 +152,7 @@ public class BasicReservation implements Reservation, Serializable {
         }
     }
 
-    //Need to override hashcode if I override .equals() so that only equivalent objects have same hash
+    // Need to override hashcode if I override .equals() so that only equivalent objects have same hash
     @Override
     public int hashCode() {
         return Objects.hash(movie, date, row, seat);

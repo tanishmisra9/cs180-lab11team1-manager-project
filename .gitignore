@@ -1,0 +1,10 @@
+*.class
+*.jar
+*.war
+*.ear
+.DS_Store
+out/
+bin/
+*.iml
+.idea/
+EOF
