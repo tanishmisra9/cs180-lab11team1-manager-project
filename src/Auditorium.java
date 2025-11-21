@@ -1,5 +1,6 @@
 package src;
 
+import java.io.Serializable;
 import java.time.*;
 import java.util.Arrays;
 
@@ -7,17 +8,15 @@ import java.util.Arrays;
  * The Auditorium class of CS180 Team Project.
  * Auditoriums contain a jagged array of seats, where a seat is either "empty" or the name of the
  * user that fills said seat for the event day. double[][] seatPrices corresponds to each seat's price.
- *
+ * "The struggle towards the heights is enough to fill a man's heart" - albert camus
  *
  * <p>Purdue University -- CS18000 -- Fall 2025</p>
  *
  * @author Logan Dalton
- * @version Nov 8, 2025
+ * @version Nov 19, 2025
  */
-
-
-//TODO JUnit testcases
-public class Auditorium implements AuditoriumInterface {
+public class Auditorium implements AuditoriumInterface, Serializable {
+    private static final long serialVersionUID = 1L;
 
     //----FIELDS----//
     private String[][] seats;
@@ -156,7 +155,7 @@ public class Auditorium implements AuditoriumInterface {
 
     public Auditorium(int rows, int cols, double price, String movie, LocalDateTime showingTime) {
         this(rows, cols, price);
-	    this.showingName = movie;
+        this.showingName = movie;
         this.showingTime = showingTime;
     }
 
@@ -181,7 +180,7 @@ public class Auditorium implements AuditoriumInterface {
         showingName = newName;
     }
 
-    
+
     // Movie methods are a quick fix to resolve issues with other classes using getMovie instead of getShowing
     public String getMovie() {
         return showingName;
@@ -190,11 +189,11 @@ public class Auditorium implements AuditoriumInterface {
     public void setMovie(String newName) {
         showingName = newName;
     }
-    
+
     public LocalDateTime getMovieDate() {
         return showingTime;
     }
-    
+
 
 
     @Override
@@ -213,6 +212,10 @@ public class Auditorium implements AuditoriumInterface {
             copy[i] = Arrays.copyOf(this.seatPrices[i], this.seatPrices[i].length);
         }
         return copy;
+    }
+
+    public double getSeatPrice(int row, int col) {
+        return seatPrices[row][col];
     }
 
     @Override

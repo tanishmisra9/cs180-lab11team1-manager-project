@@ -3,20 +3,14 @@ package src;
 import java.time.LocalDateTime;
 
 /**
- * An interface defining the public contract for an Auditorium of CS180 Team Project 01.
+ * An interface defining the public contract for an Auditorium.
  * This includes methods for managing seats, prices, and showing times.
  *
- *
  * <p>Purdue University -- CS18000 -- Fall 2025</p>
- * Team Project 01
  *
  * @author Logan Dalton
- * @version Nov 10, 2025
+ * @version Nov 19, 2025
  */
-/**
-
- */
-
 public interface AuditoriumInterface {
 
     //----Getters/Setters----//
@@ -27,19 +21,18 @@ public interface AuditoriumInterface {
      */
     String getShowingName();
 
-
     /**
      * Sets the String showingName to the newName.
      * This changes the name of the showing.
      * @param newName the new name of the showing.
      */
-    void setShowingName (String newName);
+    void setShowingName(String newName);
 
     /**
-     //Gets the 2D array representing the seats and their reservation status.
-     //A seat is "empty" if empty.
-     //A seat is the User's name if filled.
-     //@return A 2D String array of seats.
+     * Gets the 2D array representing the seats and their reservation status.
+     * A seat is "empty" if empty.
+     * A seat is the User's name if filled.
+     * @return A 2D String array of seats.
      */
     String[][] getSeats();
 
@@ -117,7 +110,6 @@ public interface AuditoriumInterface {
      */
     void setShowingDate(int year, int month, int day, int hour, int minute);
 
-
     //----Updating the current time----//
 
     /**
@@ -141,7 +133,6 @@ public interface AuditoriumInterface {
      */
     void updateTime(int year, int month, int day, int hour, int minute);
 
-
     //---- Updating the showing time ----//
 
     /**
@@ -157,7 +148,7 @@ public interface AuditoriumInterface {
 
     /**
      * Updates the showing time using individual components.
-     * * Useful if showing date is stored as ints.
+     * Useful if showing date is stored as ints.
      * @param year The year.
      * @param month The month.
      * @param day The day.
@@ -165,7 +156,6 @@ public interface AuditoriumInterface {
      * @param minute The minute.
      */
     void updateShowingTime(int year, int month, int day, int hour, int minute);
-
 
     //----Price Management----//
 
@@ -239,7 +229,6 @@ public interface AuditoriumInterface {
      * @param price The factor to multiply each seat's price in that row by.
      */
     void multiplyColPrices(int row, double price);
-
 
     //----Reservation Management----//
 

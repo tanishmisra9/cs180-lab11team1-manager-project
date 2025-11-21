@@ -1,10 +1,18 @@
 package src;
 
+import java.io.Serializable;
+
 /**
  * Represents a user's credit card used for transactions.
+ *
+ * <p>Purdue University -- CS18000 -- Fall 2025</p>
+ *
+ * @author Sravya Malladi
+ * @version Nov 19, 2025
  */
-// pushed changes that were taking forever
-public class CreditCard {
+public class CreditCard implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final String cardHolderName;
     private final String cardNumber;  // Ideally encrypted or tokenized
