@@ -27,7 +27,7 @@ public class BasicReservation implements Reservation, Serializable {
         }
         if (date == null) {
             throw new IllegalArgumentException("Reservation date can't be null.");
-        }
+        } //else if (date ) TODO: add prevent if date is in past can't add rez
 
         //check for illegal nums
         if (row < 1 || seat < 1) {
