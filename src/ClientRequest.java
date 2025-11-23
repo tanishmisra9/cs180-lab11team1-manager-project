@@ -5,8 +5,10 @@ import java.util.UUID;
 
 public class ClientRequest implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private final String id = UUID.randomUUID().toString();
-    private final String type;      // e.g., "LOGIN", "SEND_MESSAGE"
+    private final String type; // e.g., "LOGIN", "SEND_MESSAGE"
     private final Object payload;
 
     public ClientRequest(String type, Object payload) {

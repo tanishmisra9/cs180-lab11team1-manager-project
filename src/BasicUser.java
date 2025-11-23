@@ -3,22 +3,12 @@ package src;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.Objects;
 
-/**
- * Basic implementation of a user account with reservations and transaction tracking.
- * Thread-safe implementation using ReentrantLock and CopyOnWriteArrayList.
- *
- * <p>Purdue University -- CS18000 -- Fall 2025</p>
- *
- * @author Sravya Malladi
- * @version Nov 19, 2025
- */
 public class BasicUser implements User, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,8 +25,12 @@ public class BasicUser implements User, Serializable {
 
     // Constructors
     public BasicUser(String username, String password, boolean isAdmin, UserType type) {
+        this(username, password, isAdmin, type, false);
+    }
+
+    public BasicUser(String username, String password, boolean isAdmin, UserType type, boolean isHashed) {
         this.username = username;
-        this.password = hashPassword(password);
+        this.password = isHashed ? password : hashPassword(password);
         this.isAdmin = isAdmin;
         this.type = type;
     }
@@ -49,37 +43,22 @@ public class BasicUser implements User, Serializable {
         this("default", "password", false);
     }
 
-    // User interface methods
     @Override
-    public String getUsername() {
-        return username;
-    }
+    public String getUsername() { return username; }
 
     @Override
-    public String getPassword() {
-        return password;
-    }
+    public String getPassword() { return password; }
 
     @Override
-    public boolean isAdmin() {
-        return isAdmin;
-    }
+    public boolean isAdmin() { return isAdmin; }
 
     @Override
     public double getPriceMultiplier() {
-        double multiplier = 1.0;
-        switch (type) {
-            case PREMIUM:
-                multiplier = 0.9;
-                break;
-            case VIP:
-                multiplier = 0.75;
-                break;
-            default:
-                multiplier = 1.0;
-                break;
-        }
-        return multiplier;
+        return switch (type) {
+            case PREMIUM -> 0.9;
+            case VIP -> 0.75;
+            default -> 1.0;
+        };
     }
 
     @Override
@@ -87,139 +66,26 @@ public class BasicUser implements User, Serializable {
         lock.lock();
         try {
             this.password = hashPassword(newPassword);
-        } finally {
-            lock.unlock();
-        }
+        } finally { lock.unlock(); }
     }
 
     @Override
     public void setAdmin(boolean isAdmin) {
         lock.lock();
-        try {
-            this.isAdmin = isAdmin;
-        } finally {
-            lock.unlock();
-        }
+        try { this.isAdmin = isAdmin; } finally { lock.unlock(); }
     }
 
-    // Additional getters/setters
-    public UserType getType() {
-        lock.lock();
-        try {
-            return type;
-        } finally {
-            lock.unlock();
-        }
-    }
+    public UserType getType() { lock.lock(); try { return type; } finally { lock.unlock(); } }
 
-    public CreditCard getCreditCard() {
-        lock.lock();
-        try {
-            return creditCard;
-        } finally {
-            lock.unlock();
-        }
-    }
+    public CreditCard getCreditCard() { lock.lock(); try { return creditCard; } finally { lock.unlock(); } }
 
-    public void setCreditCard(CreditCard card) {
-        lock.lock();
-        try {
-            this.creditCard = card;
-        } finally {
-            lock.unlock();
-        }
-    }
+    public void setCreditCard(CreditCard card) { lock.lock(); try { this.creditCard = card; } finally { lock.unlock(); } }
 
-    public List<BasicReservation> getReservations() {
-        return List.copyOf(reservations);
-    }
+    public List<BasicReservation> getReservations() { return List.copyOf(reservations); }
 
-    public List<String> getTransactionHistory() {
-        return List.copyOf(transactionHistory);
-    }
+    public List<String> getTransactionHistory() { return List.copyOf(transactionHistory); }
 
-    public void addTransaction(String transaction) {
-        transactionHistory.add(transaction);
-    }
-
-    // Reservation management
-    public boolean addReservation(String movie, LocalDateTime date, int startRow,
-                                  int startSeat, int numPeople, double reservationFee) {
-        lock.lock();
-        try {
-            if (creditCard == null) {
-                System.out.println("Reservation failed: No credit card on file.");
-                return false;
-            }
-            if (numPeople <= 0) {
-                System.out.println("Reservation failed: Must reserve for at least one person.");
-                return false;
-            }
-
-            double totalCost = reservationFee * numPeople * getPriceMultiplier();
-            String chargeMessage = String.format(
-                    "Charged $%.2f to %s for %d-person reservation (movie: %s)",
-                    totalCost, creditCard.getMaskedNumber(), numPeople, movie
-            );
-
-            // Simulated payment
-            transactionHistory.add(chargeMessage);
-
-            // Create one reservation per person
-            for (int i = 0; i < numPeople; i++) {
-                int row = startRow;
-                int seat = startSeat + i; // seats next to each other
-                BasicReservation r = new BasicReservation(username, movie, date, row, seat);
-                reservations.add(r);
-            }
-
-            System.out.println("Reservation made for " + numPeople + " people: " + movie + " on " + date);
-            return true;
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    public boolean cancelReservation(String movie, String showTime, LocalDate date,
-                                     int numPeople, double reservationFee) {
-        lock.lock();
-        try {
-            int canceled = 0;
-            List<Reservation> toCancel = new java.util.ArrayList<>();
-
-            for (Reservation r : reservations) {
-                if (r.isActive() &&
-                        r.getMovie().equals(movie) &&
-                        r.getShowtime().equals(showTime) &&
-                        r.getDate().equals(date)) {
-                    toCancel.add(r);
-                    if (++canceled == numPeople) break;
-                }
-            }
-
-            if (toCancel.isEmpty()) {
-                System.out.println("No matching reservations found to cancel.");
-                return false;
-            }
-
-            double refundAmount = reservationFee * toCancel.size() * getPriceMultiplier();
-            for (Reservation r : toCancel) {
-                r.cancel();
-            }
-            reservations.removeAll(toCancel);
-
-            String refundMessage = String.format(
-                    "Refunded $%.2f to %s for cancelling %d-person reservation (movie: %s)",
-                    refundAmount, creditCard.getMaskedNumber(), toCancel.size(), movie
-            );
-            transactionHistory.add(refundMessage);
-
-            System.out.println("Cancelled " + toCancel.size() + " reservations for " + movie);
-            return true;
-        } finally {
-            lock.unlock();
-        }
-    }
+    public void addTransaction(String transaction) { transactionHistory.add(transaction); }
 
     public boolean upgradeUser(UserType newType, double cost) {
         lock.lock();
@@ -232,22 +98,17 @@ public class BasicUser implements User, Serializable {
                 System.out.println("Upgrade failed: Cannot downgrade or re-purchase same tier.");
                 return false;
             }
-
             String transaction = String.format(
                     "Charged $%.2f to %s for upgrade to %s",
                     cost, creditCard.getMaskedNumber(), newType
             );
             transactionHistory.add(transaction);
             this.type = newType;
-
             System.out.println("Upgrade successful: " + transaction);
             return true;
-        } finally {
-            lock.unlock();
-        }
+        } finally { lock.unlock(); }
     }
 
-    // Utility: SHA-256 password hashing
     private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -272,13 +133,10 @@ public class BasicUser implements User, Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BasicUser)) return false;
-        BasicUser u = (BasicUser) o;
+        if (!(o instanceof BasicUser u)) return false;
         return getUsername().equals(u.getUsername());
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(getUsername());
-    }
+    public int hashCode() { return Objects.hash(getUsername()); }
 }
