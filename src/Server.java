@@ -54,9 +54,21 @@ public class Server implements ServerInterface {
                                 continue;
                             }
                         }
-                        // Assuming client sends over a Reservation object
-                        var choice = reader.readObject();
-                        expression = choice.getchoice();
+
+                        var clientRequest = reader.readObject();
+                        String type = clientRequest.getType();
+                        if (type.equals("RESSERVE")) {
+
+                        } else if (type.equals("AVAILABILITY")) {
+                            List<String> availability = new ArrayList<>();
+                            List<Auditorium> auditoriums = database.getAuditoriums();
+                            for (var auditorium : auditoriums) {
+                                availability.add(auditorium.getMovie());
+                            }
+                            ServerResponse res = new ServerResponse("availability", new AvailabilityPayload(availability));
+                            writer.writeObject(res);
+                            writer.flush();
+                        }
                         switch (expression) {
                             case 1: //print available seats for requested date.
 //                            System.out.println("");
