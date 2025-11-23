@@ -60,11 +60,7 @@ public class Server implements ServerInterface {
                         if (type.equals("RESSERVE")) {
 
                         } else if (type.equals("AVAILABILITY")) {
-                            List<String> availability = new ArrayList<>();
                             List<Auditorium> auditoriums = database.getAuditoriums();
-                            for (var auditorium : auditoriums) {
-                                availability.add(auditorium.getMovie());
-                            }
                             ServerResponse res = new ServerResponse("availability", new AvailabilityPayload(availability));
                             writer.writeObject(res);
                             writer.flush();

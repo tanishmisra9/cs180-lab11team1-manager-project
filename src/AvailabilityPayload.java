@@ -2,11 +2,11 @@ package src;
 import java.io.Serializable;
 
 public class ServerPayload implements Serializable {
-    private final List<String> info;
+    private final List<Auditorium> info;
 
-    public ServerPayload(List<String> info) {
+    public ServerPayload(List<Auditorium> info) {
         this.info = info;
         }
 
-    public List<String> getInfo() { return info; }
+    public List<Auditorium> getInfo() { return info; }
 }
