@@ -11,7 +11,7 @@ public class Server implements ServerInterface {
         ReservationDataBase database = ReservationDataBase.loadDatabase();
         int expression;
         try (ServerSocket serverSocket = new ServerSocket(4242))  {
-            while (!exit) {
+            while (!exit) { //server loop
                 System.out.println("Waiting for client to connect...");
 
                 try (Socket socket = serverSocket.accept();
@@ -20,47 +20,59 @@ public class Server implements ServerInterface {
 
                     System.out.println("Client connected!");
 
-                    var clientRequest = reader.readObject();
-                    //TODO: figure out how to see if account is just created
-                    if (account not already created){
-                        var creationDetails = reader.readObject();
-                        database.addUser(user);
-                    }
-                    else if (Account already created){
-                        var clientRequest = reader.readObject();
+                    while (true) { // individual client loop
+                        var clientRequest = reader.readObject(); // login
                         LoginPayload payload = clientRequest.getPayload();
+                        String type = clientRequest.getType();
                         String username = payload.getUsername();
                         String password = payload.getPassword();
                         var user = database.getUser(username);
+                        BasicUser currentUser;
 
-                        if (user == null) {
-                        //TODO: send to client that login failed.
-
-                        continue;
-                        } else if (/*USERNAME DOESNT MATCH WITH PASSWORD*/) {
-                        //TODO: send to client that login failed.
-                        continue;
-                       }
-                    }
-                    // Assuming client sends over a Reservation object
-                    var choice = reader.readObject();
-                    expression = choice.getchoice();
-                    switch (expression) {
-                        case 1: //print available seats
+                        if (user == null && !type.equals("LOGIN")){
+                            var creationDetails = reader.readObject();
+                            database.addUser(user);
+                        } else if (user == null && type.equals("LOGIN")  || user != null && !type.equals("LOGIN")) {
+                            ServerResponse res = new ServerResponse("regularMessage", new ServerPayload(false, "failure"));
+                            writer.writeObject(res); // client should handle this by saying password or account name wrong
+                            writer.flush();
+                            continue;
+                        } else if (user != null && type.equals("LOGIN")) {
+                           // validate login in here some how
+                            BasicUser tempUser = new BasicUser("temp", password, false);
+                            String hashedPassword = tempUser.getPassword();
+                            if (user.getPassword().equals(hashedPassword)()) {
+                                currentUser = user;
+                                ServerResponse res = new ServerResponse("regularMessage", new ServerPayload(true, "login success"));
+                                writer.writerObject(res);
+                                writer.flush();
+                            }
+                            else {
+                                ServerResponse res = new ServerResponse("regularMessage", new ServerPayload(false, "failure"));
+                                writer.writeObject(res); // client should handle this by saying password or account name wrong
+                                writer.flush();
+                                continue;
+                            }
+                        }
+                        // Assuming client sends over a Reservation object
+                        var choice = reader.readObject();
+                        expression = choice.getchoice();
+                        switch (expression) {
+                            case 1: //print available seats for requested date.
 //                            System.out.println("");
-                            break;
-                        case 2: //reservation
-                            Reservation reservation = reader.readObject();
+                                break;
+                            case 2: //reserve
+                                Reservation reservation = reader.readObject();
 
-                            boolean a = database.reserve(reservation);
-                            writer.writeBoolean(a); // client handles if successful or not
-                            break;
-                        case 3: //
+                                boolean a = database.reserve(reservation);
+                                writer.writeBoolean(a); // client handles if successful or not
+                                break;
+                            case 3: //
 
-                            break;
+                                break;
 
+                        }
                     }
-
 
 
 
