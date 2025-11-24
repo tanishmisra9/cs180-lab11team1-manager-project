@@ -12,8 +12,10 @@ public class ClientDriver {
         Scanner sc = new Scanner(System.in);
 
         Client basic = new BasicClient();
-        ClientA a = new ClientA(basic);
-        a.connectToServer();
+        ClientService a = new ClientService(basic);
+        a.connectToServer();        
+
+        boolean isAdmin = false;
 
         System.out.println("Welcome to the ticketing client!");
 
@@ -30,7 +32,11 @@ public class ClientDriver {
                 a.login(username, password);
                 // TODO verify if successful
                 // read from server, and get payload
+                // TODO verify if admin
                 boolean isValidLogin = true;
+                if (isAdmin) {
+                    break fullBreak;
+                }
 
                 if (isValidLogin) {
                     break loginBreak;
@@ -171,7 +177,7 @@ public class ClientDriver {
                             break seatSelectionBreak;
                         } else {
                             System.out.println("\nSeat (" + intRow + ", " + intCol + ") is already taken!"
-                                    + "Please select an empty seat.");
+                                    + " Please select an empty seat.");
                             continue seatSelectionBreak;
                         }
 
@@ -195,7 +201,7 @@ public class ClientDriver {
                         } else if (payScreenOption.equals("2")) {
                             continue seatSelectionPaymentBreak;
                         } else {
-                            System.out.println("Error: Please enter a valid number (1 or 2)");
+                                 System.out.println("Error: Please enter a vamber (1 or 2)");
                             continue paymentScreenBreak;
                         }
                     } // end paymentScreen while loop
@@ -235,6 +241,92 @@ public class ClientDriver {
             } // end returnMovieSelection while loop
 
         } // end full while loop
+
+
+        if (isAdmin) {
+
+            System.out.println("\nSuccess!");
+            String input;
+
+            adminOuter:while(true) {
+            // TODO
+
+            // choose what to do while loop (selectOptions).
+            // options include: reserve seat, edit existing auditorium, create new venue, add auditorium.
+            // at any time, type "exit" to return to options menu
+            selectOptions:while(true) {
+                System.out.println("\n--- Selection what you wish to do: ---");
+                System.out.println("1: Reserve seat");
+                System.out.println("2: Edit existing auditorium");
+                System.out.println("3: Create new venue");
+                System.out.println("4: Add auditorium");
+                System.out.println("Type 'exit' to return.");
+                System.out.prinln("Enter selection: ");
+
+                input = scanner.nextLine().trim();
+
+                switch (input) {
+                    case "1": {
+                        // TODO: Reserve seat logic
+
+                        // if reserve seat is selected
+                        // while loop select showing
+                        // while loop select which seat
+                        // while loop set seat to reserved (could be for out of order or actually booking)
+
+                        selectShowing:while(true) {
+                            
+                        }
+                    } break; // This breaks out of the 'switch', not the 'while'
+                
+                    case "2":
+                        // TODO: Edit existing auditorium logic
+                        break;
+
+                    case "3":
+                        // TODO: Create new venue logic
+                        break;
+                    case "4":
+                        // TODO: Add auditorium logic
+                        break;
+                    case "exit":
+                        System.out.println("Exiting options menu...");
+                        break selectOptions; 
+                    default:
+                        // This handles any invalid input
+                        System.out.println("Error: Invalid input. Please enter a number 1-4 or exit.");
+                        break;
+                }
+            }
+        
+        // Code execution continues here after the loop is broken
+        System.out.println("Returned to previous menu.");
+        scanner.close();
+
+            
+
+            // if edit existing auditorium is selected
+            // while loop editExisting
+            // ask if they want to change movie name, reschedule the time, or cancel it
+
+            // if a new venue is to be created
+            // while loop createVenue
+            // ask which auditorium to use (each is a 2D array of seats), (USE A PLACEHOLDER)
+            // show existing venues and ask which time to schedule
+            // check if time does not conflict and is in the future and then create it
+
+            // if adding an auditorium
+            // ask for row
+            // ask for col
+            // create an auditorium with that row and column
+
+            //after this, return back to options menu and ask again
+
+            }
+
+
+        }
+
 
         System.out.println("\nThank you for using our service!");
         sc.close();
