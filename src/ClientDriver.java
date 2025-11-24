@@ -261,9 +261,9 @@ public class ClientDriver {
                 System.out.println("3: Create new venue");
                 System.out.println("4: Add auditorium");
                 System.out.println("Type 'exit' to return.");
-                System.out.prinln("Enter selection: ");
+                System.out.println("Enter selection: ");
 
-                input = scanner.nextLine().trim();
+                input = sc.nextLine().trim();
 
                 switch (input) {
                     case "1": {
@@ -301,7 +301,6 @@ public class ClientDriver {
         
         // Code execution continues here after the loop is broken
         System.out.println("Returned to previous menu.");
-        scanner.close();
 
             
 
