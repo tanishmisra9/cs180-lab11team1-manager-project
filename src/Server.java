@@ -54,33 +54,41 @@ public class Server implements ServerInterface {
                                 continue;
                             }
                         }
+                        while (true) {
+                            var clientRequest = reader.readObject();
+                            String type = clientRequest.getType();
+                            if (type.equals("RESERVE")) {
+                                ReservationPayload = clientRequest.getPayload();
+                                BasicReservation reservation = new BasicReservation(currentUser.getUsername(),
+                                        ReservationPayload.getMovie(),
+                                        ReservationPayload.getDate(),
+                                        ReservationPayload.getStartRow(),
+                                        ReservationPayload.getStartSeat());
+                                boolean reserveStatus = database.reserve(currentUser, reservation);
+                                ServerResponse res = new ServerResponse("reserveStatus", new ServerPayload(reserveStatus, "reserveStatus"));
+                                writer.writeObject(res);
+                                writer.flush();
 
-                        var clientRequest = reader.readObject();
-                        String type = clientRequest.getType();
-                        if (type.equals("RESSERVE")) {
-
-                        } else if (type.equals("AVAILABILITY")) {
-                            List<Auditorium> auditoriums = database.getAuditoriums();
-                            ServerResponse res = new ServerResponse("availability", new AvailabilityPayload(availability));
-                            writer.writeObject(res);
-                            writer.flush();
+                            } else if (type.equals("AVAILABILITY")) {
+                                List<Auditorium> auditoriums = database.getAuditoriums();
+                                List<String> names = new ArrayList<>();
+                                for (var auditorium: auditoriums) {
+                                    names.add(auditorium.getMovie());
+                                }
+                                ServerResponse response = new ServerResponse("names", new MovieListPayload(names));
+                                writer.writeObject(response);
+                                writer.flush();
+                                
+                                ServerResponse res = new ServerResponse("availability", new AvailabilityPayload(availability));
+                                writer.writeObject(res);
+                                writer.flush();
+                            } else if (type.equals("EXIT")) {
+                                break;
+                            } else {
+                                continue;
+                            }
                         }
-                        switch (expression) {
-                            case 1: //print available seats for requested date.
-//                            System.out.println("");
-                                break;
-                            case 2: //reserve
-                                Reservation reservation = reader.readObject();
-
-                                boolean a = database.reserve(reservation);
-                                writer.writeBoolean(a); // client handles if successful or not
-                                break;
-                            case 3: //
-
-                                break;
-
-                        }
-                    }
+            }
 
 
 

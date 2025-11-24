@@ -1,7 +1,7 @@
 package src;
 import java.io.Serializable;
 
-public class ServerPayload implements Serializable {
+public class AvailabilityPayload implements Serializable {
     private final List<Auditorium> info;
 
     public ServerPayload(List<Auditorium> info) {
