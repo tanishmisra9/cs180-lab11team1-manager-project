@@ -56,6 +56,7 @@ public class AllUserClassesTest {
         assertEquals(0.75, user.getPriceMultiplier());
     }
 
+    /* 
     @Test @Order(4)
     void testAddReservationSuccess() {
         boolean success = user.addReservation(
@@ -70,7 +71,28 @@ public class AllUserClassesTest {
         assertEquals("Interstellar", reservations.get(0).getMovie());
         assertTrue(user.getTransactionHistory().get(0).contains("Charged $"));
     }
+        */
 
+    @Test @Order(4)
+void testAddReservationSuccess_VoidMethod() {
+    
+    user.addReservation(
+            "Interstellar",
+            LocalDateTime.of(2025, 11, 10, 19, 0),
+            3, 10, 2, 15.0
+    );
+    List<BasicReservation> reservations = user.getReservations();
+    
+    assertEquals(2, reservations.size(), "Reservation count should be 2, not 1");
+    
+    assertEquals("Interstellar", reservations.get(1).getShowtime(), 
+                 "The movie title of the newly added reservation is incorrect.");
+
+    assertTrue(user.getTransactionHistory().get(user.getTransactionHistory().size() - 1).contains("Charged $15.0"),
+               "Transaction history should contain the correct 'Charged' entry for $15.0.");
+}
+
+    /*
     @Test @Order(5)
     void testAddReservationNoCreditCardFails() {
         BasicUser noCardUser = new BasicUser("bob", "secret", false, UserType.REGULAR);
@@ -80,6 +102,22 @@ public class AllUserClassesTest {
         );
         assertFalse(success);
     }
+        */
+       
+    @Test @Order(5)
+    void testAddReservationNoCreditCardFails() {
+        BasicUser noCardUser = new BasicUser("bob", "secret", false, UserType.REGULAR);
+        int initialReservationCount = noCardUser.getReservations().size();
+        noCardUser.addReservation(
+            "Matrix",
+            LocalDateTime.now(), 1, 1, 2, 12.0
+        );
+        int finalReservationCount = noCardUser.getReservations().size();
+        assertEquals(initialReservationCount, finalReservationCount,
+            "Reservation count should not change when a user has no credit card.");
+    }
+
+
 
     @Test @Order(6)
     void testCancelReservationFailsWithEmptyShowtime() {
@@ -93,6 +131,9 @@ public class AllUserClassesTest {
         assertFalse(user.getTransactionHistory().stream().anyMatch(s -> s.contains("Refunded")));
         assertEquals(3, user.getReservations().size());
     }
+
+
+    
 
     @Test @Order(7)
     void testUpgradeUser() {
