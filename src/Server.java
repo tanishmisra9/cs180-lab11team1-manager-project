@@ -6,17 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
 
+public class Server implements ServerInterface, Runnable {
+    private boolean exit = false;
+    private ReservationDatabase database;
 
-public class Server implements ServerInterface {
-    private static boolean exit = false;
-
-    
+    public Server() {
+        this.database = ReservationDatabase.loadDatabase();
+        this.database.populateDefaults();
+    }
 
     public static void main(String[] args) {
-        ReservationDatabase database = ReservationDatabase.loadDatabase();
-        database.populateDefaults();
+        Server server = new Server();
+        server.run();
+    }
 
-        int expression;
+    @Override
+    public void run() {
         try (ServerSocket serverSocket = new ServerSocket(4242))  {
             while (!exit) { //server loop
                 System.out.println("Waiting for client to connect...");
@@ -51,7 +56,7 @@ public class Server implements ServerInterface {
                             writer.flush();
                             continue;
                         } else if (user != null && type.equals("LOGIN")) {
-                           // validate login in here some how
+                            // validate login in here some how
                             BasicUser tempUser = new BasicUser("temp", password, false);
                             String hashedPassword = tempUser.getPassword();
                             if (user.getPassword().equals(hashedPassword)) {
@@ -157,7 +162,6 @@ public class Server implements ServerInterface {
         } catch (IOException e) {
             System.out.println("Server set-up: " + e.getMessage());
         }
-
     }
 
     //generates a square auditorium
