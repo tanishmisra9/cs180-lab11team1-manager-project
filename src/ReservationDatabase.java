@@ -1,7 +1,9 @@
 package src;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 /**
@@ -143,4 +145,58 @@ public class ReservationDatabase implements Serializable {
     public List<Auditorium> getAuditoriums() {
         return new ArrayList<>(auditoriums);
     }
+
+    public void populateDefaults() {
+        if (!auditoriums.isEmpty()) return;  // already populated
+
+        LocalDate today = LocalDate.now();
+        LocalDate end = today.plusMonths(3);
+
+        String[] movies = {
+                "Dune 2",
+                "Interstellar",
+                "Oppenheimer",
+                "Spider-Man: Across the Spider-Verse",
+                "The Matrix",
+                "Inception"
+        };
+
+        Random rand = new Random();
+
+        // Standard showtimes
+        LocalTime[] times = {
+                LocalTime.of(13, 0), // 1pm
+                LocalTime.of(16, 0), // 4pm
+                LocalTime.of(19, 0)  // 7pm
+        };
+
+        for (LocalDate date = today; !date.isAfter(end); date = date.plusDays(1)) {
+
+            // Random movie of the day
+            String movieOfDay = movies[rand.nextInt(movies.length)];
+
+            // Number of auditoriums that day (2–3)
+            int count = rand.nextInt(2) + 2;
+
+            for (int i = 0; i < count; i++) {
+                LocalTime time = times[i % times.length];  // just cycle through times
+                LocalDateTime showDateTime = LocalDateTime.of(date, time);
+
+                Auditorium a = new Auditorium(
+                        10,     // rows
+                        20,     // cols
+                        4.0,    // ticket price
+                        movieOfDay,
+                        showDateTime
+                );
+
+                auditoriums.add(a);
+            }
+        }
+
+        this.saveData();
+    }
+
+
+
 }

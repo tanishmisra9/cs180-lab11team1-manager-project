@@ -14,6 +14,8 @@ public class Server implements ServerInterface {
 
     public static void main(String[] args) {
         ReservationDatabase database = ReservationDatabase.loadDatabase();
+        database.populateDefaults();
+
         int expression;
         try (ServerSocket serverSocket = new ServerSocket(4242))  {
             while (!exit) { //server loop
@@ -34,10 +36,12 @@ public class Server implements ServerInterface {
                         var user = database.getUserByUsername(username);
                         BasicUser currentUser = new BasicUser();
 
-                        if (user == null && !type.equals("LOGIN")){
-                            var creationDetails = ServerInterface.safeRead(reader);
+                        if (user == null && type.equals("REGISTRATION")){
+                            //RegistrationPayload creationDetails = (RegistrationPayload) ServerInterface.safeRead(reader);
+                            //BasicUser newUser = new BasicUser(creationDetails.getUserName(), creationDetails.getPassword(), creationDetails.getAdmin(), creationDetails.getType());
+
                             database.addUser(user);
-                        } else if (user == null && type.equals("LOGIN")  || user != null && !type.equals("LOGIN")) {
+                        } else if (user == null && type.equals("LOGIN")  || user != null && type.equals("REGISTRATION")) {
                             ServerResponse res = new ServerResponse("regularMessage", new ServerPayload(false, "failure"));
                             writer.writeObject(res); // client should handle this by saying password or account name wrong
                             writer.flush();
