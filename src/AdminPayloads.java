@@ -98,6 +98,11 @@ class CancelShowingPayload implements Serializable {
     }
 
     public String getMovieName() { return movieName; }
+
+    public LocalDateTime getTime() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTime'");
+    }
 }
 
 

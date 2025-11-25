@@ -5,18 +5,24 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
+import src.AdminPayloads.*;
 
+public class Server implements ServerInterface, Runnable {
+    private boolean exit = false;
+    private ReservationDatabase database;
 
-public class Server implements ServerInterface {
-    private static boolean exit = false;
-
-    
+    public Server() {
+        this.database = ReservationDatabase.loadDatabase();
+        this.database.populateDefaults();
+    }
 
     public static void main(String[] args) {
-        ReservationDatabase database = ReservationDatabase.loadDatabase();
-        database.populateDefaults();
+        Server server = new Server();
+        server.run();
+    }
 
-        int expression;
+    @Override
+    public void run() {
         try (ServerSocket serverSocket = new ServerSocket(4242))  {
             while (!exit) { //server loop
                 System.out.println("Waiting for client to connect...");
@@ -37,17 +43,21 @@ public class Server implements ServerInterface {
                         BasicUser currentUser = new BasicUser();
 
                         if (user == null && type.equals("REGISTRATION")){
-                            //RegistrationPayload creationDetails = (RegistrationPayload) ServerInterface.safeRead(reader);
-                            //BasicUser newUser = new BasicUser(creationDetails.getUserName(), creationDetails.getPassword(), creationDetails.getAdmin(), creationDetails.getType());
+                            RegistrationPayload creationDetails = (RegistrationPayload) ServerInterface.safeRead(reader);
+                            BasicUser newUser = new BasicUser(creationDetails.getUserName(), creationDetails.getPassword(), creationDetails.getAdmin(), creationDetails.getType());
 
-                            database.addUser(user);
+                            database.addUser(newUser);
+
+                            ServerResponse res = new ServerResponse("accountCreated", new ServerPayload(true, "acccountCreated"));
+                            writer.writeObject(res);
+                            writer.flush();
                         } else if (user == null && type.equals("LOGIN")  || user != null && type.equals("REGISTRATION")) {
                             ServerResponse res = new ServerResponse("regularMessage", new ServerPayload(false, "failure"));
                             writer.writeObject(res); // client should handle this by saying password or account name wrong
                             writer.flush();
                             continue;
                         } else if (user != null && type.equals("LOGIN")) {
-                           // validate login in here some how
+                            // validate login in here some how
                             BasicUser tempUser = new BasicUser("temp", password, false);
                             String hashedPassword = tempUser.getPassword();
                             if (user.getPassword().equals(hashedPassword)) {
@@ -97,8 +107,36 @@ public class Server implements ServerInterface {
                                 writer.writeObject(response);
                                 writer.flush();
                             } else if (type.equals("EDITSHOWINGTIME")) {
-                            //    EditShowingTimePayload time = (EditShowingTimePayload) clientRequest.getPayload();
+                                EditShowingTimePayload timeInfo = (EditShowingTimePayload) clientRequest.getPayload();
+                                LocalDateTime oldTime = timeInfo.getOldTime();
+                                LocalDateTime newTime = timeInfo.getNewTime();
 
+                                boolean pass = database.editShowingTime(oldTime, newTime, oldTime);
+                                ServerResponse response = new ServerResponse("editShowingTime", new ServerPayload(pass, "passfail"));
+                                writer.writeObject(response);
+                                writer.flush();
+
+                            } else if (type.equals("CANCELSHOWING")) {
+                                CancelShowingPayload load = (CancelShowingPayload) clientRequest.getPayload();
+                                LocalDateTime time = load.getTime();
+                                boolean pass = database.deleteAuditorium(time);
+                                ServerResponse response = new ServerResponse("cancelShowing", new ServerPayload(pass, "passfail"));
+                                writer.writeObject(response);
+                                writer.flush();
+
+                            } else if (type.equals("CREATEVENUE")) {
+                                CreateVenuePayload venue = (CreateVenuePayload) clientRequest.getPayload();
+                                String name = venue.getName();
+                                int rows = venue.getRows();
+                                int cols = venue.getCols();
+                                String movieName = venue.getShowingName();
+                                LocalDateTime time = venue.getTime();
+                                double price = venue.getPrice();
+
+                                database.createAuditorium(rows, cols, price, movieName, time);
+                                ServerResponse response = new ServerResponse("createVenue", new ServerPayload(true, "pass"));
+                                writer.writeObject(response);
+                                writer.flush();
                             }
                             else if (type.equals("EXIT")) {
                                 break;
@@ -114,7 +152,6 @@ public class Server implements ServerInterface {
         } catch (IOException e) {
             System.out.println("Server set-up: " + e.getMessage());
         }
-
     }
 
     //generates a square auditorium
