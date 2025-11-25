@@ -5,19 +5,12 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
-import java.time.LocalDateTime;
 
 
 public class Server implements ServerInterface {
-    private boolean exit = false;
+    private static boolean exit = false;
 
-    public static ClientRequest safeRead(ObjectInputStream ois) {
-        try {
-            return (ClientRequest) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            return null;
-        }
-    }
+    
 
     public static void main(String[] args) {
         ReservationDatabase database = ReservationDatabase.loadDatabase();
@@ -33,16 +26,16 @@ public class Server implements ServerInterface {
                     System.out.println("Client connected!");
 
                     while (true) { // individual client loop
-                        ClientRequest req = safeRead(reader); // login
+                        ClientRequest req = ServerInterface.safeRead(reader); // login
                         LoginPayload payload = (LoginPayload) req.getPayload();
                         String type = req.getType();
                         String username = payload.getUsername();
                         String password = payload.getPassword();
                         var user = database.getUserByUsername(username);
-                        BasicUser currentUser;
+                        BasicUser currentUser = new BasicUser();
 
                         if (user == null && !type.equals("LOGIN")){
-                            var creationDetails = safeRead(reader);
+                            var creationDetails = ServerInterface.safeRead(reader);
                             database.addUser(user);
                         } else if (user == null && type.equals("LOGIN")  || user != null && !type.equals("LOGIN")) {
                             ServerResponse res = new ServerResponse("regularMessage", new ServerPayload(false, "failure"));
@@ -67,10 +60,10 @@ public class Server implements ServerInterface {
                             }
                         }
                         while (true) {
-                            var clientRequest = safeRead(reader);
+                            var clientRequest = ServerInterface.safeRead(reader);
                             type = clientRequest.getType();
                             if (type.equals("RESERVE")) {
-                                ReservationPayload reservationInfo = clientRequest.getPayload();
+                                ReservationPayload reservationInfo = (ReservationPayload) clientRequest.getPayload();
                                 BasicReservation reservation = new BasicReservation(currentUser.getUsername(),
                                         reservationInfo.getMovie(),
                                         reservationInfo.getReservationDate(),
@@ -100,30 +93,8 @@ public class Server implements ServerInterface {
                                 continue;
                             }
                         }
-            }
-
-
-
-
-                    /*
-                    String user = reservation.getUser();
-                    String showtime = reservation.getShowtime(); // showtime ID or descriptor
-
-                    // Movie and scheduling
-                    String movie = reservation.getMovie();
-                    LocalDate date = reservation.getDate();
-                    LocalDateTime localDateTime = reservation.getDateTime();
-
-                    // Seating info
-                    int row = reservation.getRow();
-                    int seat = reservation.getSeat();
-
-                     */
-
-
-
-
-                } catch (IOException except) {
+                    }
+                } catch (IOException e) {
                     System.out.println("Server-Client communication error: " + e.getMessage());
                 }
             }

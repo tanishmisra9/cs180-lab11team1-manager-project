@@ -139,4 +139,13 @@ public class BasicUser implements User, Serializable {
 
     @Override
     public int hashCode() { return Objects.hash(getUsername()); }
+
+    public void addReservation(String movie, LocalDateTime dateTime, int row, int seat, int people, double seatPrice) {
+        BasicReservation reservation = new BasicReservation(this.getUsername(),
+                movie,
+                dateTime,
+                row,
+                seat);
+        reservations.add(reservation);
+    }
 }
