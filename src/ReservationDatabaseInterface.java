@@ -1,5 +1,6 @@
 package src;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -63,4 +64,43 @@ public interface ReservationDatabaseInterface {
      * Saves the database to persistent storage.
      */
     void saveData();
+
+    /**
+     * Edits the showing time of an auditorium.
+     * @param oldTime the current showing time
+     * @param newTime the new showing time
+     * @return true if successful, false if auditorium not found
+     */
+    boolean editShowingTime(LocalDateTime oldTime, LocalDateTime newTime);
+
+    /**
+     * Deletes an auditorium from the database.
+     * @param time the showing time of the auditorium to delete
+     * @return true if successful, false if auditorium not found
+     */
+    boolean deleteAuditorium(LocalDateTime time);
+
+    /**
+     * Edits the movie name of an auditorium.
+     * @param time the showing time of the auditorium
+     * @param newName the new movie name
+     * @return true if successful, false if auditorium not found
+     */
+    boolean editMovieName(LocalDateTime time, String newName);
+
+    /**
+     * Creates a new auditorium and adds it to the database.
+     * @param rows number of rows in the auditorium
+     * @param cols number of columns in the auditorium
+     * @param price ticket price
+     * @param movie movie name
+     * @param time showing time
+     * @return the created auditorium
+     */
+    Auditorium createAuditorium(int rows, int cols, double price, String movie, LocalDateTime time);
+
+    /**
+     * Populates the database with default auditoriums for the next 3 months.
+     */
+    void populateDefaults();
 }

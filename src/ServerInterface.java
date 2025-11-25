@@ -16,7 +16,8 @@ public interface ServerInterface {
     /**
      * Runs the server and handles client connections
      */
-    //void run();
+    void run();
+
     static ClientRequest safeRead(ObjectInputStream ois) {
         try {
             return (ClientRequest) ois.readObject();
