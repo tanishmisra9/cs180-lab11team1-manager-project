@@ -55,14 +55,18 @@ class EditShowingNamePayload implements Serializable {
 
     private String oldMovieName;
     private String newMovieName;
+    private LocalDateTime time;
 
-    public EditShowingNamePayload(String oldMovieName, String newMovieName) {
+    public EditShowingNamePayload(String oldMovieName, String newMovieName, LocalDateTime time) {
         this.oldMovieName = oldMovieName;
         this.newMovieName = newMovieName;
+        this.time = time; 
     }
 
     public String getOldMovieName() { return oldMovieName; }
     public String getNewMovieName() { return newMovieName; }
+    public LocalDateTime getTime() { return time; }
+    
 }
 
 // ---------------------------
@@ -92,12 +96,16 @@ class CancelShowingPayload implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String movieName;
+    private LocalDateTime time; 
 
-    public CancelShowingPayload(String movieName) {
+    
+    public CancelShowingPayload(String movieName, LocalDateTime time) {
         this.movieName = movieName;
+        this.time = time;
     }
 
     public String getMovieName() { return movieName; }
+    public LocalDateTime getTime() { return time; }
 }
 
 
