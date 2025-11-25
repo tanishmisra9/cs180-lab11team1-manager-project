@@ -86,7 +86,7 @@ public class ClientService {
     // ADMIN SHOWING MANAGEMENT
     // --------------------------
     public void editShowingName(String oldName, String newName) {
-        EditShowingNamePayload payload = new EditShowingNamePayload(oldName, newName);
+        EditShowingNamePayload payload = new EditShowingNamePayload(oldName, newName, oldtime);
         ClientRequest req = new ClientRequest("EDIT_SHOWING_NAME", payload);
         client.sendRequest(req);
     }
@@ -98,7 +98,7 @@ public class ClientService {
     }
 
     public void cancelShowing(String movieName) {
-        CancelShowingPayload payload = new CancelShowingPayload(movieName);
+        CancelShowingPayload payload = new CancelShowingPayload(movieName, null);
         ClientRequest req = new ClientRequest("CANCEL_SHOWING", payload);
         client.sendRequest(req);
     }
