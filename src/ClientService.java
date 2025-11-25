@@ -114,7 +114,7 @@ public class ClientService {
             try {
                 System.out.println("waiting...");
                 return responseQueue.take(); // waits until a response is available
-                System.out.println("recieved");
+               
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 return null;
