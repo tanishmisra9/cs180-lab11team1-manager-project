@@ -1,5 +1,7 @@
 package src;
 //import src.AdminPayloads.*;
+import org.hamcrest.core.Is;
+
 import java.time.LocalDateTime;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -30,7 +32,7 @@ public class ClientService {
     }
 
     public void connectToServer() {
-        client.connect("localhost", 4444);
+        client.connect("localhost", 4242);
     }
 
     // --------------------------
@@ -50,6 +52,12 @@ public class ClientService {
         client.sendRequest(req);
     }
 
+    public void isAdmin() {
+        IsAdminPayload payload = new IsAdminPayload(false);
+        ClientRequest req = new ClientRequest("IS_ADMIN", payload);
+        client.sendRequest(req);
+    }
+
     // --------------------------
     // MESSAGES / LOGOUT
     // --------------------------
@@ -66,7 +74,8 @@ public class ClientService {
     // USER SEAT / MOVIE FLOW
     // --------------------------
     public void requestMovies() {
-        ClientRequest req = new ClientRequest("REQUEST_MOVIES", null);
+        AvailabilityRequestPayload load = new AvailabilityRequestPayload("please");
+        ClientRequest req = new ClientRequest("REQUEST_MOVIES", load);
         client.sendRequest(req);
     }
 
@@ -76,9 +85,9 @@ public class ClientService {
         client.sendRequest(req);
     }
 
-    public void reserveSeat(String movieName, int row, int col, String username) {
-        ReserveSeatPayload payload = new ReserveSeatPayload(movieName, row, col, username);
-        ClientRequest req = new ClientRequest("RESERVE_SEAT", payload);
+    public void reserveSeat(int row, int col, String username, Auditorium auditorium) {
+        ReservationPayload load= new ReservationPayload(".", ".", row, col, -1, 0.0, null,  auditorium);
+        ClientRequest req = new ClientRequest("RESERVE_SEAT", load);
         client.sendRequest(req);
     }
 
@@ -108,6 +117,7 @@ public class ClientService {
         ClientRequest req = new ClientRequest("CREATE_VENUE", payload);
         client.sendRequest(req);
     }
+
 
         /** Blocking method to get the next ServerResponse */
         public ServerResponse receiveResponse() {

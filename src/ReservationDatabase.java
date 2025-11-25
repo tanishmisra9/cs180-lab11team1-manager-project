@@ -204,7 +204,7 @@ public class ReservationDatabase implements Serializable {
 
 
     public void populateDefaults() {
-        if (!auditoriums.isEmpty()) return;  // already populated
+        auditoriums.clear();
 
         LocalDate today = LocalDate.now();
         LocalDate end = today.plusMonths(3);
@@ -214,7 +214,7 @@ public class ReservationDatabase implements Serializable {
                 "Interstellar",
                 "Oppenheimer",
                 "Spider-Man: Across the Spider-Verse",
-                "The Matrix",
+                "Parasite",
                 "Inception"
         };
 

@@ -13,8 +13,8 @@ public class ServerPayload implements Serializable {
     public boolean getSuccess() { return success; }
     public String getMessage() { return message; }
 
-    public boolean isAdmin() {
+   /* public boolean isAdmin() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'isAdmin'");
-    }
+    }*/ // dont need this method IMO just use getSuccess, it contains a bool anyways. - sebastian
 }
