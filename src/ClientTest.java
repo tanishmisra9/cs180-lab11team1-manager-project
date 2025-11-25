@@ -5,7 +5,7 @@ public class ClientTest {
 
         Client basic = new BasicClient();
 
-        ClientA a = new ClientA(basic);
+        ClientService a = new ClientService(basic);
       
         a.connectToServer();
         a.login("sravya", "password123");
