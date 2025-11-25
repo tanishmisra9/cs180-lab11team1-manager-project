@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
@@ -140,12 +141,82 @@ public class BasicUser implements User, Serializable {
     @Override
     public int hashCode() { return Objects.hash(getUsername()); }
 
-    public void addReservation(String movie, LocalDateTime dateTime, int row, int seat, int people, double seatPrice) {
-        BasicReservation reservation = new BasicReservation(this.getUsername(),
-                movie,
-                dateTime,
-                row,
-                seat);
-        reservations.add(reservation);
+    public boolean addReservation(String movie, LocalDateTime date, int startRow,
+                                  int startSeat, int numPeople, double reservationFee) {
+        lock.lock();
+        try {
+            if (creditCard == null) {
+                System.out.println("Reservation failed: No credit card on file.");
+                return false;
+            }
+            if (numPeople <= 0) {
+                System.out.println("Reservation failed: Must reserve for at least one person.");
+                return false;
+            }
+
+            double totalCost = reservationFee * numPeople * getPriceMultiplier();
+            String chargeMessage = String.format(
+                    "Charged $%.2f to %s for %d-person reservation (movie: %s)",
+                    totalCost, creditCard.getMaskedNumber(), numPeople, movie
+            );
+
+            // Simulated payment
+            transactionHistory.add(chargeMessage);
+
+            // Create one reservation per person
+            for (int i = 0; i < numPeople; i++) {
+                int row = startRow;
+                int seat = startSeat + i; // seats next to each other
+                BasicReservation r = new BasicReservation(username, movie, date, row, seat);
+                reservations.add(r);
+            }
+
+            System.out.println("Reservation made for " + numPeople + " people: " + movie + " on " + date);
+            return true;
+        } finally {
+            lock.unlock();
+        }
     }
+
+    public boolean cancelReservation(String movie, String showTime, LocalDate date,
+                                     int numPeople, double reservationFee) {
+        lock.lock();
+        try {
+            int canceled = 0;
+            List<Reservation> toCancel = new java.util.ArrayList<>();
+
+            for (Reservation r : reservations) {
+                if (r.isActive() &&
+                        r.getMovie().equals(movie) &&
+                        r.getShowtime().equals(showTime) &&
+                        r.getDate().equals(date)) {
+                    toCancel.add(r);
+                    if (++canceled == numPeople) break;
+                }
+            }
+
+            if (toCancel.isEmpty()) {
+                System.out.println("No matching reservations found to cancel.");
+                return false;
+            }
+
+            double refundAmount = reservationFee * toCancel.size() * getPriceMultiplier();
+            for (Reservation r : toCancel) {
+                r.cancel();
+            }
+            reservations.removeAll(toCancel);
+
+            String refundMessage = String.format(
+                    "Refunded $%.2f to %s for cancelling %d-person reservation (movie: %s)",
+                    refundAmount, creditCard.getMaskedNumber(), toCancel.size(), movie
+            );
+            transactionHistory.add(refundMessage);
+
+            System.out.println("Cancelled " + toCancel.size() + " reservations for " + movie);
+            return true;
+        } finally {
+            lock.unlock();
+        }
+    }
+
 }

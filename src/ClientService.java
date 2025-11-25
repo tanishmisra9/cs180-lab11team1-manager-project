@@ -1,5 +1,7 @@
 package src;
 
+import java.time.*;
+
 public class ClientService {
 
     private final Client client;
@@ -30,8 +32,8 @@ public class ClientService {
     }
 
     public void reserveSeats(String movie, String showtime, int startRow,
-                             int startSeat, int numPeople, double fee) {
-        ReservationPayload payload = new ReservationPayload(movie, showtime, startRow, startSeat, numPeople, fee);
+                             int startSeat, int numPeople, double fee, LocalDateTime reservationDate) {
+        ReservationPayload payload = new ReservationPayload(movie, showtime, startRow, startSeat, numPeople, fee, reservationDate);
         client.sendRequest(new ClientRequest("RESERVE_SEAT", payload));
     }
 
