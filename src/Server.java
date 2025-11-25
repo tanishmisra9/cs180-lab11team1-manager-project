@@ -100,6 +100,17 @@ public class Server implements ServerInterface {
                                 ServerResponse response = new ServerResponse("isAdmin", new ServerPayload(bool, "isAdmin"));
                                 writer.writeObject(response);
                                 writer.flush();
+
+                            } else if (type.equals("EDITSHOWINGNAME")) {
+                                EditShowingNamePayload nameLoad = (EditShowingNamePayload) clientRequest.getPayload();
+                                LocalDateTime time = nameLoad.getTime();
+                                String name = nameLoad.getNewMovieName();
+
+                                bool pass = database.editMovieName(time, name);
+                                ServerResponse res = new ServerResponse("editName", new ServerPayload(pass, "passfail"));
+                                writer.writeObject(res);
+                                writer.flush();
+
                             } else if (type.equals("EDITSHOWINGTIME")) {
                                 EditShowingTimePayload timeInfo = (EditShowingTimePayload) clientRequest.getPayload();
                                 LocalDateTime oldTime = timeInfo.getOldTime();
