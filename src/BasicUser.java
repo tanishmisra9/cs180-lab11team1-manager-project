@@ -177,7 +177,7 @@ public class BasicUser implements User, Serializable {
         }
     }
 
-    public boolean cancelReservation(String movie, String showTime, LocalDate date,
+    public boolean cancelReservation(String movie, String showTime, LocalDateTime date,
                                      int numPeople, double reservationFee) {
         lock.lock();
         try {
