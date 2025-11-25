@@ -35,7 +35,7 @@ public class ClientDriver {
                 ServerResponse resp = service.receiveResponse();
 
                 if (resp != null && resp.getPayload() instanceof ServerPayload payload) {
-                    if (payload.isSuccess()) {
+                    if (payload.getSuccess()) {
                         System.out.println("\nLogin successful!");
                         isAdmin = payload.isAdmin();
                         currentUsername = username;
@@ -57,7 +57,7 @@ public class ClientDriver {
                 ServerResponse resp = service.receiveResponse();
 
                 if (resp != null && resp.getPayload() instanceof ServerPayload payload) {
-                    if (payload.isSuccess()) {
+                    if (payload.getSuccess()) {
                         System.out.println("\nRegistration successful! Please log in.");
                     } else {
                         System.out.println("\nRegistration failed: " + payload.getMessage());
@@ -79,23 +79,27 @@ public class ClientDriver {
             ServerResponse resp = service.receiveResponse();
             List<String> movies = Arrays.asList("Madagascar", "Godzilla", "Cars", "Toy Story"); // fallback
             if (resp != null && resp.getPayload() instanceof MovieListPayload mlp) {
-                movies = mlp.getMovies();
+                movies = mlp.getNames();
             }
 
             System.out.println("\nAvailable showings:");
             movies.forEach(System.out::println);
 
             // Movie selection
-            String movieSelected;
+            final String[] movieSelected = new String[1]; // mutable holder
+
             while (true) {
                 System.out.println("\nSelect movie:");
-                movieSelected = sc.nextLine();
-                if (movies.stream().anyMatch(m -> m.equalsIgnoreCase(movieSelected))) break;
+                String input = sc.nextLine();
+                if (movies.stream().anyMatch(m -> m.equalsIgnoreCase(input))) {
+                    movieSelected[0] = input; // set selected movie
+                    break;
+                }
                 System.out.println("Invalid movie!");
             }
 
             // Seat selection
-            service.requestAuditorium(movieSelected);
+            service.requestAuditorium(movieSelected[0]);
             resp = service.receiveResponse();
             String[][] seating = new String[0][];
             if (resp != null && resp.getPayload() instanceof AuditoriumPayload ap) {
@@ -136,7 +140,7 @@ public class ClientDriver {
                     continue;
                 }
 
-                service.reserveSeat(movieSelected, r, c, currentUsername);
+                service.reserveSeat(movieSelected[0], r, c, currentUsername);
                 resp = service.receiveResponse();
                 if (resp != null && resp.getPayload() instanceof ServerPayload payload) {
                     System.out.println(payload.getMessage());
@@ -206,7 +210,19 @@ public class ClientDriver {
                                 System.out.println("Enter new minute:");
                                 int mi = Integer.parseInt(sc.nextLine());
                                 LocalDateTime newTime = LocalDateTime.of(y, mo, d, h, mi);
-                                service.editShowingTime(movieToEdit, newTime);
+
+                                System.out.println("Enter new year:");
+                                y = Integer.parseInt(sc.nextLine());
+                                System.out.println("Enter new month:");
+                                mo = Integer.parseInt(sc.nextLine());
+                                System.out.println("Enter new day:");
+                                d = Integer.parseInt(sc.nextLine());
+                                System.out.println("Enter new hour:");
+                                h = Integer.parseInt(sc.nextLine());
+                                System.out.println("Enter new minute:");
+                                mi = Integer.parseInt(sc.nextLine());
+                                LocalDateTime oldTime = LocalDateTime.of(y, mo, d, h, mi);
+                                service.editShowingTime(movieToEdit, newTime, oldTime);
                                 break;
                             case "3":
                                 service.cancelShowing(movieToEdit);
