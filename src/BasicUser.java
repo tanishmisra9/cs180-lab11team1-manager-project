@@ -140,13 +140,41 @@ public class BasicUser implements User, Serializable {
     @Override
     public int hashCode() { return Objects.hash(getUsername()); }
 
-    public void addReservation(String movie, LocalDateTime dateTime, int row, int seat, int people, double seatPrice) {
-        BasicReservation reservation = new BasicReservation(this.getUsername(),
-                movie,
-                dateTime,
-                row,
-                seat);
-        reservations.add(reservation);
+    public boolean addReservation(String movie, LocalDateTime date, int startRow,
+                                  int startSeat, int numPeople, double reservationFee) {
+        lock.lock();
+        try {
+            if (creditCard == null) {
+                System.out.println("Reservation failed: No credit card on file.");
+                return false;
+            }
+            if (numPeople <= 0) {
+                System.out.println("Reservation failed: Must reserve for at least one person.");
+                return false;
+            }
+
+            double totalCost = reservationFee * numPeople * getPriceMultiplier();
+            String chargeMessage = String.format(
+                    "Charged $%.2f to %s for %d-person reservation (movie: %s)",
+                    totalCost, creditCard.getMaskedNumber(), numPeople, movie
+            );
+
+            // Simulated payment
+            transactionHistory.add(chargeMessage);
+
+            // Create one reservation per person
+            for (int i = 0; i < numPeople; i++) {
+                int row = startRow;
+                int seat = startSeat + i; // seats next to each other
+                BasicReservation r = new BasicReservation(username, movie, date, row, seat);
+                reservations.add(r);
+            }
+
+            System.out.println("Reservation made for " + numPeople + " people: " + movie + " on " + date);
+            return true;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public boolean cancelReservation(String movie, String showTime, LocalDate date,
