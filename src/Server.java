@@ -2,6 +2,7 @@ package src;
 
 import java.net.*;
 import java.io.*;
+import java.time.LocalDateTime;
 
 
 public class Server implements ServerInterface {
@@ -119,6 +120,11 @@ public class Server implements ServerInterface {
             System.out.println("Server set-up: " + e.getMessage());
         }
 
+    }
+
+    //generates a square auditorium
+    public Auditorium genAuditorium(int rows, int cols, double prices, LocalDateTime date) {
+        return new Auditorium(rows, cols, prices, date);
     }
 
 }
