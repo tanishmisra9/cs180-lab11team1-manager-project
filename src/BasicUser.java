@@ -121,14 +121,7 @@ public class BasicUser implements User, Serializable {
         }
     }
 
-    @Override
-    public String toString() {
-        return String.format(
-                "User[%s, type=%s, admin=%s, card=%s]",
-                username, type, isAdmin,
-                (creditCard != null ? creditCard.getMaskedNumber() : "None")
-        );
-    }
+    
 
     @Override
     public boolean equals(Object o) {
@@ -148,4 +141,13 @@ public class BasicUser implements User, Serializable {
                 seat);
         reservations.add(reservation);
     }
+    @Override
+    public String toString() {
+        return String.format(
+                "User[%s, type=%s, admin=%s, card=%s]",
+                username, type, isAdmin,
+                (creditCard != null ? creditCard.getMaskedNumber() : "None")
+        );
+    }
+
 }

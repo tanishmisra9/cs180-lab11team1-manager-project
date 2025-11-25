@@ -13,6 +13,7 @@ public class ClientDriver {
         BasicClient client = new BasicClient();
         ClientService service = new ClientService(client);
         service.connectToServer();
+        
 
         boolean isAdmin = false;
         String currentUsername = null;

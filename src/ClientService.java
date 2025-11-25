@@ -30,7 +30,7 @@ public class ClientService {
     }
 
     public void connectToServer() {
-        client.connect("localhost", 4444);
+        client.connect("localhost", 4242);
     }
 
     // --------------------------
