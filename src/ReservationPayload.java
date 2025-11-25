@@ -14,9 +14,10 @@ public class ReservationPayload implements Serializable {
     private final int numPeople;
     private final double reservationFee;
     private final LocalDateTime reservationDate;
+    private Auditorium auditorium;
 
     public ReservationPayload(String movie, String showtime, int startRow, int startSeat,
-                              int numPeople, double reservationFee,  LocalDateTime reservationDate) {
+                              int numPeople, double reservationFee,  LocalDateTime reservationDate,  Auditorium auditorium) {
         this.movie = movie;
         this.showtime = showtime;
         this.startRow = startRow;
@@ -24,6 +25,7 @@ public class ReservationPayload implements Serializable {
         this.numPeople = numPeople;
         this.reservationFee = reservationFee;
         this.reservationDate = reservationDate;
+        this.auditorium = auditorium;
     }
 
     public String getMovie() { return movie; }
@@ -33,4 +35,5 @@ public class ReservationPayload implements Serializable {
     public int getNumPeople() { return numPeople; }
     public double getReservationFee() { return reservationFee; }
     public LocalDateTime getReservationDate() { return reservationDate; }
+    public Auditorium getAuditorium() { return auditorium; }
 }

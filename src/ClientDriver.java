@@ -1,8 +1,7 @@
 package src;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.time.*;
 
 public class ClientDriver {
@@ -38,7 +37,7 @@ public class ClientDriver {
                 if (resp != null && resp.getPayload() instanceof ServerPayload payload) {
                     if (payload.getSuccess()) {
                         System.out.println("\nLogin successful!");
-                        isAdmin = payload.isAdmin();
+                       // isAdmin = payload.getSuccess();
                         currentUsername = username;
                         break loginRegisterLoop;
                     } else {
@@ -74,20 +73,34 @@ public class ClientDriver {
                 System.out.println("Invalid input.");
             }
         }
+        service.isAdmin();
+        ServerResponse response = service.receiveResponse();
+        //System.out.println("response recieved!!!!!!!!!");
+        if (response != null && response.getPayload() instanceof ServerPayload payload) {
+            isAdmin = payload.getSuccess();
+          //  System.out.println("\n welcome admin");
+        }
 
+        // fetch from server once per session.
+
+        service.requestMovies();
+        ServerResponse resp = service.receiveResponse();
+
+        List<String> movies = Arrays.asList("Madagascar", "Godzilla", "Cars", "Toy Story"); // fallback
+        if (resp != null && resp.getPayload() instanceof MovieListPayload mlp) {
+            movies = mlp.getNames();
+        }
+        resp = service.receiveResponse();
+        AvailabilityPayload load = (AvailabilityPayload) resp.getPayload();
+        List<Auditorium> auditoriumList = load.getInfo();
         // USER FLOW
         userFlow:
         while (!isAdmin) {
 
-            service.requestMovies();
-            ServerResponse resp = service.receiveResponse();
-            List<String> movies = Arrays.asList("Madagascar", "Godzilla", "Cars", "Toy Story"); // fallback
-            if (resp != null && resp.getPayload() instanceof MovieListPayload mlp) {
-                movies = mlp.getNames();
-            }
+            Set<String> uniqueMovies =new TreeSet<>(movies);
 
             System.out.println("\nAvailable showings:");
-            movies.forEach(System.out::println);
+            uniqueMovies.forEach(System.out::println);
 
             // Movie selection
             final String[] movieSelected = new String[1]; // mutable holder
@@ -102,59 +115,87 @@ public class ClientDriver {
                 System.out.println("Invalid movie!");
             }
 
-            // Seat selection
-            service.requestAuditorium(movieSelected[0]);
-            resp = service.receiveResponse();
-            String[][] seating = new String[0][];
-            if (resp != null && resp.getPayload() instanceof AuditoriumPayload ap) {
-                seating = ap.getSeats();
+            // Seat selection, we cant just get one auditorium for a movie.
+            List<Auditorium> showingsForMovie = new ArrayList<>();
+            int n = 0;
+           // service.requestAuditorium(movieSelected[0]);
+            // resp = service.receiveResponse();
+            for (Auditorium a: auditoriumList) {
+                if (a.getMovie().equals(movieSelected[0])) {
+                    showingsForMovie.add(a);
+                    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM dd, yyyy h:mm a");
+                    String pretty = a.getShowingTime().format(fmt);
+                    System.out.println(n + ": " + pretty);
+                    n++;
+                }
             }
+            System.out.println("Choose movie showing time");
+            int dateChoice = sc.nextInt();
+            Auditorium chosenAuditorium = showingsForMovie.get(dateChoice);
 
-            while (true) {
-                System.out.println("\nSeating (_=empty, X=taken):");
-                for (String[] row : seating) {
-                    for (String seat : row) {
-                        System.out.print((seat.equals("empty") ? "_" : "X") + " ");
+
+            /*if (resp != null && resp.getPayload() instanceof AuditoriumPayload ap) {
+                seating = ap.getSeats();
+            }*/
+
+                while (true) {
+                    System.out.println("\nSeating (_=empty, X=taken):");
+                    String[][] seating = chosenAuditorium.getSeats();
+                    for (String[] row : seating) {
+                        for (String seat : row) {
+                            System.out.print((seat.equals("empty") ? "_" : "X") + " ");
+                        }
+                        System.out.println();
                     }
-                    System.out.println();
-                }
 
-                System.out.println("Enter row (or 'exit'):");
-                String rowStr = sc.nextLine();
-                if (rowStr.equalsIgnoreCase("exit")) break userFlow;
+                    System.out.println("Enter row (or 'exit'):");
+                    String rowStr = sc.nextLine();
+                    if (rowStr.equalsIgnoreCase("exit")) break userFlow;
 
-                System.out.println("Enter col:");
-                String colStr = sc.nextLine();
+                    System.out.println("Enter col:");
+                    String colStr = sc.nextLine();
 
-                int r = -1, c = -1;
-                try {
-                    r = Integer.parseInt(rowStr) - 1;
-                    c = Integer.parseInt(colStr) - 1;
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid numbers.");
-                    continue;
-                }
+                    int r = -1, c = -1;
+                    try {
+                        r = Integer.parseInt(rowStr) - 1;
+                        c = Integer.parseInt(colStr) - 1;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid numbers.");
+                        continue;
+                    }
 
-                if (r < 0 || r >= seating.length || c < 0 || c >= seating[r].length) {
-                    System.out.println("Out of bounds.");
-                    continue;
-                }
-                if (!seating[r][c].equals("empty")) {
-                    System.out.println("Seat taken.");
-                    continue;
-                }
+                    if (r < 0 || r >= seating.length || c < 0 || c >= seating[r].length) {
+                        System.out.println("Out of bounds.");
+                        continue;
+                    }
+                    if (!seating[r][c].equals("empty")) {
+                        System.out.println("Seat taken.");
+                        continue;
+                    }
 
-                service.reserveSeat(movieSelected[0], r, c, currentUsername);
+                service.reserveSeat(r, c, currentUsername, chosenAuditorium);
                 resp = service.receiveResponse();
                 if (resp != null && resp.getPayload() instanceof ServerPayload payload) {
-                    System.out.println(payload.getMessage());
+                    ServerPayload tuna = (ServerPayload) resp.getPayload();
+                    if (tuna.getSuccess()) {
+                        chosenAuditorium.setReservation(currentUsername, r, c);
+                        System.out.println("Reservation successful!");
+                    } else {
+                        System.out.println("Reservation failed.");
+                    }
+
                 }
                 break;
             }
+            System.out.println("Make another reservation? Y N");
+            String answer = sc.nextLine();
+            if (answer.equalsIgnoreCase("n")) break;
+
         }
 
         // ADMIN FLOW
         if (isAdmin) {
+
             adminLoop:
             while (true) {
                 System.out.println("\n--- Admin Menu ---");
@@ -166,7 +207,7 @@ public class ClientDriver {
                 String input = sc.nextLine();
                 switch (input) {
                     case "1":
-                        System.out.println("Enter movie to reserve seat in:");
+                        System.out.println("Enter movie to reserve seat in:"); // we cant distinguish by movie, it has to be by time.
                         String movie = sc.nextLine();
                         service.requestAuditorium(movie);
                         ServerResponse seatResp = service.receiveResponse();
@@ -183,7 +224,7 @@ public class ClientDriver {
                         System.out.println("Enter col:");
                         int col = Integer.parseInt(sc.nextLine()) - 1;
 
-                        service.reserveSeat(movie, row, col, userToReserve);
+                       // service.reserveSeat(row, col, userToReserve, TODO: Auditorium here, look above, time implementation like that just put it here. );
                         ServerResponse res = service.receiveResponse();
                         if (res != null && res.getPayload() instanceof ServerPayload payload) {
                             System.out.println(payload.getMessage());

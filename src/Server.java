@@ -5,14 +5,19 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-// edited
+
 public class Server implements ServerInterface, Runnable {
     private boolean exit = false;
     private ReservationDatabase database;
+    private static BasicUser currentUser;
 
     public Server() {
         this.database = ReservationDatabase.loadDatabase();
         this.database.populateDefaults();
+        System.out.println("Movies in loaded database:");
+        for (Auditorium a : database.getAuditoriums()) {
+            System.out.println(a.getShowingName() + " @ " + a.getShowingTime());
+        }
     }
 
     public static void main(String[] args) {
@@ -22,8 +27,8 @@ public class Server implements ServerInterface, Runnable {
 
     @Override
     public void run() {
-        try (ServerSocket serverSocket = new ServerSocket(4242))  {
-            while (!exit) { //server loop
+        try (ServerSocket serverSocket = new ServerSocket(4242)) {
+            while (!exit) {  // server loop
                 System.out.println("Waiting for client to connect...");
 
                 try (Socket socket = serverSocket.accept();
@@ -32,53 +37,55 @@ public class Server implements ServerInterface, Runnable {
 
                     System.out.println("Client connected!");
 
-                    while (true) { // individual client loop
-                        ClientRequest req = ServerInterface.safeRead(reader); // login
+                    while (true) {  // client loop
+                        ClientRequest req = ServerInterface.safeRead(reader);
 
+                        /* ------------------------ REGISTRATION ------------------------ */
                         if (req.getPayload() instanceof RegistrationPayload) {
-                            RegistrationPayload creationDetails = (RegistrationPayload) req.getPayload();
-                            BasicUser newUser = new BasicUser(creationDetails.getUsername(), creationDetails.getPassword(), creationDetails.isAdmin());
-                            System.out.println("Calling Add USer !");
+                            RegistrationPayload p = (RegistrationPayload) req.getPayload();
+                            BasicUser newUser = new BasicUser(p.getUsername(), p.getPassword(), p.isAdmin());
 
                             database.addUser(newUser);
 
-                            ServerResponse res = new ServerResponse("accountCreated", new ServerPayload(true, "acccountCreated"));
-                            writer.writeObject(res);
+                            writer.writeObject(new ServerResponse(
+                                    "accountCreated",
+                                    new ServerPayload(true, "accountCreated")));
                             writer.flush();
+                        }
 
-                        } else if (req.getPayload() instanceof LoginPayload) {
-                            LoginPayload payload = (LoginPayload) req.getPayload();
-                            String type = req.getType();
-                            String username = payload.getUsername();
-                            String password = payload.getPassword();
-                            var user = database.getUserByUsername(username);
-                            BasicUser currentUser = new BasicUser();
-                            BasicUser tempUser = new BasicUser("temp", password, false);
+                        /* ------------------------ LOGIN ------------------------ */
+                        else if (req.getPayload() instanceof LoginPayload) {
+                            LoginPayload p = (LoginPayload) req.getPayload();
+                            var user = database.getUserByUsername(p.getUsername());
 
-                            String hashedPassword = tempUser.getPassword();
-                                if (user != null && user.getPassword().equals(hashedPassword)) {
-                                    currentUser = user;
-                                    ServerResponse res = new ServerResponse("regularMessage", new ServerPayload(true, "login success"));
-                                    System.out.println("login success");
-                                    writer.writeObject(res);
-                                    writer.flush();
-                                }
-                                else {
-                                    ServerResponse res = new ServerResponse("regularMessage", new ServerPayload(false, "failure"));
-                                    System.out.println("login failure");
-                                    writer.writeObject(res); // client should handle this by saying password or account name wrong
-                                    writer.flush();
-                                    continue;
-                                }
-    
-                        } 
+                            BasicUser temp = new BasicUser("temp", p.getPassword(), false);
+                            String hashed = temp.getPassword();
+
+                            if (user != null && user.getPassword().equals(hashed)) {
+                                currentUser = user;
+
+                                writer.writeObject(new ServerResponse(
+                                        "regularMessage",
+                                        new ServerPayload(true, "login success")));
+                                writer.flush();
+                                continue;
+                            } else {
+                                writer.writeObject(new ServerResponse(
+                                        "regularMessage",
+                                        new ServerPayload(false, "failure")));
+                                writer.flush();
+                                continue;
+                            }
+                        }
+
+                        /* ------------------------ RESERVATION ------------------------ */
                         else if (req.getPayload() instanceof ReservationPayload) {
                             ReservationPayload p = (ReservationPayload) req.getPayload();
 
                             BasicReservation reservation = new BasicReservation(
                                     currentUser.getUsername(),
-                                    p.getMovie(),
-                                    p.getReservationDate(),
+                                    p.getAuditorium().getMovie(),
+                                    p.getAuditorium().getShowingDate(),
                                     p.getStartRow(),
                                     p.getStartSeat()
                             );
@@ -87,10 +94,11 @@ public class Server implements ServerInterface, Runnable {
 
                             writer.writeObject(new ServerResponse(
                                     "reserveStatus",
-                                    new ServerPayload(success, "reserveStatus")
-                            ));
+                                    new ServerPayload(success, "reserveStatus")));
                             writer.flush();
-                    }
+                        }
+
+                        /* ------------------------ AVAILABILITY ------------------------ */
                         else if (req.getPayload() instanceof AvailabilityRequestPayload) {
                             var auditoriums = database.getAuditoriums();
                             List<String> names = new ArrayList<>();
@@ -99,134 +107,106 @@ public class Server implements ServerInterface, Runnable {
                                 names.add(a.getMovie());
                             }
 
-                            // send movie names
-                            writer.writeObject(new ServerResponse(
-                                    "names",
-                                    new MovieListPayload(names)
-                            ));
+                            writer.writeObject(new ServerResponse("names", new MovieListPayload(names)));
                             writer.flush();
 
-                            // send full auditorium availability
-                            writer.writeObject(new ServerResponse(
-                                    "availability",
-                                    new AvailabilityPayload(auditoriums)
-                            ));
+                            writer.writeObject(new ServerResponse("availability", new AvailabilityPayload(auditoriums)));
                             writer.flush();
-            }
-
-            /* ------------------------  IS ADMIN  ------------------------ */
-
-            else if (req.getPayload() instanceof IsAdminPayload) {
-
-                boolean adminStatus = currentUser.isAdmin();
-
-                writer.writeObject(new ServerResponse(
-                        "isAdmin",
-                        new ServerPayload(adminStatus, "isAdmin")
-                ));
-                writer.flush();
-            }
-
-            /* ------------------------  EDIT SHOWING NAME  ------------------------ */
-
-            else if (req.getPayload() instanceof EditShowingNamePayload) {
-                EditShowingNamePayload p = (EditShowingNamePayload) req.getPayload();
-
-                boolean pass = database.editMovieName(p.getTime(), p.getNewMovieName());
-
-                writer.writeObject(new ServerResponse(
-                        "editName",
-                        new ServerPayload(pass, "passfail")
-                ));
-                writer.flush();
-            }
-
-            /* ------------------------  EDIT SHOWING TIME  ------------------------ */
-
-            else if (req.getPayload() instanceof EditShowingTimePayload) {
-                EditShowingTimePayload p = (EditShowingTimePayload) req.getPayload();
-
-                boolean pass = database.editShowingTime(p.getOldTime(), p.getNewTime());
-
-                writer.writeObject(new ServerResponse(
-                        "editShowingTime",
-                        new ServerPayload(pass, "passfail")
-                ));
-                writer.flush();
-            }
-
-            /* ------------------------  CANCEL SHOWING  ------------------------ */
-
-            else if (req.getPayload() instanceof CancelShowingPayload) {
-                CancelShowingPayload p = (CancelShowingPayload) req.getPayload();
-
-                boolean pass = database.deleteAuditorium(p.getTime());
-
-                writer.writeObject(new ServerResponse(
-                        "cancelShowing",
-                        new ServerPayload(pass, "passfail")
-                ));
-                writer.flush();
-            }
-
-            /* ------------------------  CREATE VENUE  ------------------------ */
-
-            else if (req.getPayload() instanceof CreateVenuePayload) {
-                CreateVenuePayload p = (CreateVenuePayload) req.getPayload();
-
-                database.createAuditorium(
-                        p.getRows(),
-                        p.getCols(),
-                        p.getDefaultSeatPrice(),
-                        p.getShowingName(),
-                        p.getShowingTime()
-                );
-
-                writer.writeObject(new ServerResponse(
-                        "createVenue",
-                        new ServerPayload(true, "pass")
-                ));
-                writer.flush();
-            }
-
-            /* ------------------------  EXIT  ------------------------ */
-
-            else if (req.getPayload() instanceof ExitPayload) {
-                break;  // close client loop
-            }
-
-            /* ------------------------  UNKNOWN PAYLOAD  ------------------------ */
-
-            else {
-                System.out.println("Unknown request payload: " + req.getPayload().getClass().getSimpleName());
-                continue;
-            }
-
-                            
-                        else {
-                            System.out.println("Unknown client request type.");
-                            continue;
                         }
 
-                    }
-                   
+                        /* ------------------------ IS ADMIN ------------------------ */
+                        else if (req.getPayload() instanceof IsAdminPayload) {
+                            boolean adminStatus = currentUser.isAdmin();
+
+                            writer.writeObject(new ServerResponse(
+                                    "isAdmin",
+                                    new ServerPayload(adminStatus, "isAdmin")));
+                            writer.flush();
+                        }
+
+                        /* ------------------------ EDIT SHOWING NAME ------------------------ */
+                        else if (req.getPayload() instanceof EditShowingNamePayload) {
+                            EditShowingNamePayload p = (EditShowingNamePayload) req.getPayload();
+
+                            boolean pass = database.editMovieName(p.getTime(), p.getNewMovieName());
+
+                            writer.writeObject(new ServerResponse(
+                                    "editName",
+                                    new ServerPayload(pass, "passfail")));
+                            writer.flush();
+                        }
+
+                        /* ------------------------ EDIT SHOWING TIME ------------------------ */
+                        else if (req.getPayload() instanceof EditShowingTimePayload) {
+                            EditShowingTimePayload p = (EditShowingTimePayload) req.getPayload();
+
+                            boolean pass = database.editShowingTime(p.getOldTime(), p.getNewTime());
+
+                            writer.writeObject(new ServerResponse(
+                                    "editShowingTime",
+                                    new ServerPayload(pass, "passfail")));
+                            writer.flush();
+                        }
+
+                        /* ------------------------ CANCEL SHOWING ------------------------ */
+                        else if (req.getPayload() instanceof CancelShowingPayload) {
+                            CancelShowingPayload p = (CancelShowingPayload) req.getPayload();
+
+                            boolean pass = database.deleteAuditorium(p.getTime());
+
+                            writer.writeObject(new ServerResponse(
+                                    "cancelShowing",
+                                    new ServerPayload(pass, "passfail")));
+                            writer.flush();
+                        }
+
+                        /* ------------------------ CREATE VENUE ------------------------ */
+                        else if (req.getPayload() instanceof CreateVenuePayload) {
+                            CreateVenuePayload p = (CreateVenuePayload) req.getPayload();
+
+                            database.createAuditorium(
+                                    p.getRows(),
+                                    p.getCols(),
+                                    p.getDefaultSeatPrice(),
+                                    p.getShowingName(),
+                                    p.getShowingTime()
+                            );
+
+                            writer.writeObject(new ServerResponse(
+                                    "createVenue",
+                                    new ServerPayload(true, "pass")));
+                            writer.flush();
+                        }
+
+                        /* ------------------------ EXIT ------------------------ */
+                        else if (req.getPayload() instanceof ExitPayload) {
+                            break; // exits client loop
+                        }
+
+                        /* ------------------------ UNKNOWN ------------------------ */
+                        else {
+                            System.out.println("Unknown request payload: " +
+                                    req.getPayload().getClass().getSimpleName());
+                        }
+
+                    } // end client loop
+
                 } catch (IOException e) {
                     System.out.println("Server-Client communication error: " + e.getMessage());
                 }
-            }
+            } // end server loop
         } catch (IOException e) {
             System.out.println("Server set-up: " + e.getMessage());
         }
     }
 
-    //generates a square auditorium
     public Auditorium genAuditorium(int rows, int cols, double prices, LocalDateTime date) {
         return new Auditorium(rows, cols, prices, date);
     }
-
 }
 
- // commented code                      
+
+// commented code
  
 // if (user == null && type.equals("REGISTER")){
 // } else if (user == null && type.equals("LOGIN")  || user != null && type.equals("REGISTRATION")) {
