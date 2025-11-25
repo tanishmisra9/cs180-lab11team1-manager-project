@@ -44,8 +44,6 @@ public class Server implements ServerInterface, Runnable {
 
                         if (user == null && type.equals("REGISTRATION")){
                             RegistrationPayload creationDetails = (RegistrationPayload) req.getPayload();
-                            BasicUser newUser = new BasicUser(creationDetails.getUsername(), creationDetails.getPassword(), creationDetails.getAdmin(), creationDetails.getType());
-                            RegistrationPayload creationDetails = (RegistrationPayload) req.getPayload();
                             BasicUser newUser = new BasicUser(creationDetails.getUsername(), creationDetails.getPassword(), creationDetails.isAdmin());
 
                             database.addUser(newUser);
