@@ -86,6 +86,7 @@ class EditShowingTimePayload implements Serializable {
     }
 
     public String getMovieName() { return movieName; }
+    public LocalDateTime getOldtime() { return oldtime; }
     public LocalDateTime getNewTime() { return newTime; }
 }
 

@@ -136,12 +136,12 @@ public class Server implements ServerInterface, Runnable {
 
                             } else if (type.equals("CREATEVENUE")) {
                                 CreateVenuePayload venue = (CreateVenuePayload) clientRequest.getPayload();
-                                String name = venue.getName();
+                                String name = venue.getShowingName();
                                 int rows = venue.getRows();
                                 int cols = venue.getCols();
                                 String movieName = venue.getShowingName();
-                                LocalDateTime time = venue.getTime();
-                                double price = venue.getPrice();
+                                LocalDateTime time = venue.getShowingTime();
+                                double price = venue.getDefaultSeatPrice();
 
                                 database.createAuditorium(rows, cols, price, movieName, time);
                                 ServerResponse response = new ServerResponse("createVenue", new ServerPayload(true, "pass"));
