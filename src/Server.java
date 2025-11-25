@@ -43,13 +43,10 @@ public class Server implements ServerInterface, Runnable {
                         BasicUser currentUser = new BasicUser();
 
                         if (user == null && type.equals("REGISTRATION")){
-<<<<<<< HEAD
-                            RegistrationPayload creationDetails = (RegistrationPayload) ServerInterface.safeRead(reader);
-                            BasicUser newUser = new BasicUser(creationDetails.getUserName(), creationDetails.getPassword(), creationDetails.getAdmin(), creationDetails.getType());
-=======
+                            RegistrationPayload creationDetails = (RegistrationPayload) req.getPayload();
+                            BasicUser newUser = new BasicUser(creationDetails.getUsername(), creationDetails.getPassword(), creationDetails.getAdmin(), creationDetails.getType());
                             RegistrationPayload creationDetails = (RegistrationPayload) req.getPayload();
                             BasicUser newUser = new BasicUser(creationDetails.getUsername(), creationDetails.getPassword(), creationDetails.isAdmin());
->>>>>>> e182631063bae5bf9dafae86a9b52b8371803d65
 
                             database.addUser(newUser);
 
@@ -111,14 +108,12 @@ public class Server implements ServerInterface, Runnable {
                                 ServerResponse response = new ServerResponse("isAdmin", new ServerPayload(bool, "isAdmin"));
                                 writer.writeObject(response);
                                 writer.flush();
-<<<<<<< HEAD
                             } else if (type.equals("EDITSHOWINGTIME")) {
                                 EditShowingTimePayload timeInfo = (EditShowingTimePayload) clientRequest.getPayload();
                                 LocalDateTime oldTime = timeInfo.getOldTime();
                                 LocalDateTime newTime = timeInfo.getNewTime();
 
-                                boolean pass = database.editShowingTime(oldTime, newTime, oldTime);
-=======
+                                boolean pass = database.editShowingTime(oldTime, newTime);
 
                             } else if (type.equals("EDITSHOWINGNAME")) {
                                 EditShowingNamePayload nameLoad = (EditShowingNamePayload) clientRequest.getPayload();
@@ -132,11 +127,10 @@ public class Server implements ServerInterface, Runnable {
 
                             } else if (type.equals("EDITSHOWINGTIME")) {
                                 EditShowingTimePayload timeInfo = (EditShowingTimePayload) clientRequest.getPayload();
-                                LocalDateTime oldTime = timeInfo.getOldtime();
+                                LocalDateTime oldTime = timeInfo.getOldTime();
                                 LocalDateTime newTime = timeInfo.getNewTime();
 
                                 boolean pass = database.editShowingTime(oldTime, newTime);
->>>>>>> e182631063bae5bf9dafae86a9b52b8371803d65
                                 ServerResponse response = new ServerResponse("editShowingTime", new ServerPayload(pass, "passfail"));
                                 writer.writeObject(response);
                                 writer.flush();
@@ -151,21 +145,13 @@ public class Server implements ServerInterface, Runnable {
 
                             } else if (type.equals("CREATEVENUE")) {
                                 CreateVenuePayload venue = (CreateVenuePayload) clientRequest.getPayload();
-<<<<<<< HEAD
-                                String name = venue.getName();
-                                int rows = venue.getRows();
-                                int cols = venue.getCols();
-                                String movieName = venue.getShowingName();
-                                LocalDateTime time = venue.getTime();
-                                double price = venue.getPrice();
-=======
+
                                 String name = venue.getShowingName();
                                 int rows = venue.getRows();
                                 int cols = venue.getCols();
                                 String movieName = venue.getShowingName();
                                 LocalDateTime time = venue.getShowingTime();
                                 double price = venue.getDefaultSeatPrice();
->>>>>>> e182631063bae5bf9dafae86a9b52b8371803d65
 
                                 database.createAuditorium(rows, cols, price, movieName, time);
                                 ServerResponse response = new ServerResponse("createVenue", new ServerPayload(true, "pass"));
