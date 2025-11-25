@@ -91,7 +91,16 @@ public class Server implements ServerInterface {
                                 ServerResponse res = new ServerResponse("availability", new AvailabilityPayload(auditoriums));
                                 writer.writeObject(res);
                                 writer.flush();
-                            } else if (type.equals("EXIT")) {
+                            } else if (type.equals("ISADMIN")) {
+                                boolean bool = currentUser.isAdmin();
+                                ServerResponse response = new ServerResponse("isAdmin", new ServerPayload(bool, "isAdmin"));
+                                writer.writeObject(response);
+                                writer.flush();
+                            } else if (type.equals("EDITSHOWINGTIME")) {
+                            //    EditShowingTimePayload time = (EditShowingTimePayload) clientRequest.getPayload();
+
+                            }
+                            else if (type.equals("EXIT")) {
                                 break;
                             } else {
                                 continue;
