@@ -56,7 +56,7 @@ public class AllUserClassesTest {
         assertEquals(0.75, user.getPriceMultiplier());
     }
 
-    /* 
+    
     @Test @Order(4)
     void testAddReservationSuccess() {
         boolean success = user.addReservation(
@@ -71,8 +71,9 @@ public class AllUserClassesTest {
         assertEquals("Interstellar", reservations.get(0).getMovie());
         assertTrue(user.getTransactionHistory().get(0).contains("Charged $"));
     }
-        */
+        
 
+    /*
     @Test @Order(4)
 void testAddReservationSuccess_VoidMethod() {
     
@@ -91,8 +92,9 @@ void testAddReservationSuccess_VoidMethod() {
     assertTrue(user.getTransactionHistory().get(user.getTransactionHistory().size() - 1).contains("Charged $15.0"),
                "Transaction history should contain the correct 'Charged' entry for $15.0.");
 }
+               */
 
-    /*
+    
     @Test @Order(5)
     void testAddReservationNoCreditCardFails() {
         BasicUser noCardUser = new BasicUser("bob", "secret", false, UserType.REGULAR);
@@ -102,8 +104,9 @@ void testAddReservationSuccess_VoidMethod() {
         );
         assertFalse(success);
     }
-        */
+        
        
+    /* 
     @Test @Order(5)
     void testAddReservationNoCreditCardFails() {
         BasicUser noCardUser = new BasicUser("bob", "secret", false, UserType.REGULAR);
@@ -116,6 +119,7 @@ void testAddReservationSuccess_VoidMethod() {
         assertEquals(initialReservationCount, finalReservationCount,
             "Reservation count should not change when a user has no credit card.");
     }
+            */
 
 
 
@@ -126,7 +130,7 @@ void testAddReservationSuccess_VoidMethod() {
 
         // Cancel will fail because BasicReservation.getShowtime() returns ""
         boolean cancel = user.cancelReservation("Inception", "", dt.toLocalDate(), 2, 20.0);
-
+        //String movie, String showTime, LocalDateTime date, int numPeople, double reservationFee
         assertFalse(cancel);
         assertFalse(user.getTransactionHistory().stream().anyMatch(s -> s.contains("Refunded")));
         assertEquals(3, user.getReservations().size());
