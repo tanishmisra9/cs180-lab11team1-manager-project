@@ -2,12 +2,10 @@ package src;
 
 import java.net.*;
 import java.io.*;
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
-=======
 import java.time.LocalDateTime;
->>>>>>> 2164a3dfb3175427a1a0737e4ac3ac249d07b130
+import java.time.LocalDateTime;
 
 
 public class Server implements ServerInterface {
