@@ -10,6 +10,6 @@ public class ServerPayload implements Serializable {
         message = mes;
     }
 
-    public String getSuccess() { return success; }
+    public boolean getSuccess() { return success; }
     public String getMessage() { return message; }
 }
