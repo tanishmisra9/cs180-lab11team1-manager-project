@@ -1,5 +1,6 @@
 package src;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 
 /**
@@ -16,5 +17,11 @@ public interface ServerInterface {
      * Runs the server and handles client connections
      */
     //void run();
-    ClientRequest safeRead(ObjectInputStream ois);
+    static ClientRequest safeRead(ObjectInputStream ois) {
+        try {
+            return (ClientRequest) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            return null;
+        }
+    }
 }
