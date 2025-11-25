@@ -9,6 +9,6 @@ public class ClientTest {
       
         a.connectToServer();
         a.login("sravya", "password123");
-        a.sendChatMessage("Hello world!");
+        a.sendMessage("Hello world!");
     }
 }
