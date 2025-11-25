@@ -148,4 +148,46 @@ public class BasicUser implements User, Serializable {
                 seat);
         reservations.add(reservation);
     }
+
+    public boolean cancelReservation(String movie, String showTime, LocalDate date,
+                                     int numPeople, double reservationFee) {
+        lock.lock();
+        try {
+            int canceled = 0;
+            List<Reservation> toCancel = new java.util.ArrayList<>();
+
+            for (Reservation r : reservations) {
+                if (r.isActive() &&
+                        r.getMovie().equals(movie) &&
+                        r.getShowtime().equals(showTime) &&
+                        r.getDate().equals(date)) {
+                    toCancel.add(r);
+                    if (++canceled == numPeople) break;
+                }
+            }
+
+            if (toCancel.isEmpty()) {
+                System.out.println("No matching reservations found to cancel.");
+                return false;
+            }
+
+            double refundAmount = reservationFee * toCancel.size() * getPriceMultiplier();
+            for (Reservation r : toCancel) {
+                r.cancel();
+            }
+            reservations.removeAll(toCancel);
+
+            String refundMessage = String.format(
+                    "Refunded $%.2f to %s for cancelling %d-person reservation (movie: %s)",
+                    refundAmount, creditCard.getMaskedNumber(), toCancel.size(), movie
+            );
+            transactionHistory.add(refundMessage);
+
+            System.out.println("Cancelled " + toCancel.size() + " reservations for " + movie);
+            return true;
+        } finally {
+            lock.unlock();
+        }
+    }
+
 }

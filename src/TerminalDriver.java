@@ -229,7 +229,7 @@ public class TerminalDriver {
         System.out.print("Password: ");
         String password = scanner.nextLine().trim();
 
-        BasicUser user = db.getUserByUsername(username);
+        BasicUser user = db.getUserByUsername(username);    x`x``
 
         if (user == null) {
             System.out.println("\nLogin failed. User not found.");
