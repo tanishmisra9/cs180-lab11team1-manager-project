@@ -1,5 +1,7 @@
 package src;
 
+import java.io.ObjectInputStream;
+
 /**
  * Interface for the Movie Theater Server.
  *
@@ -13,5 +15,6 @@ public interface ServerInterface {
     /**
      * Runs the server and handles client connections
      */
-    void run();
+    //void run();
+    ClientRequest safeRead(ObjectInputStream ois);
 }

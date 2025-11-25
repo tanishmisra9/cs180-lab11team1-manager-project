@@ -2,13 +2,23 @@ package src;
 
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Server implements ServerInterface {
     private boolean exit = false;
 
+    public static ClientRequest safeRead(ObjectInputStream ois) {
+        try {
+            return (ClientRequest) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            return null;
+        }
+    }
+
     public static void main(String[] args) {
-        ReservationDataBase database = ReservationDataBase.loadDatabase();
+        ReservationDatabase database = ReservationDatabase.loadDatabase();
         int expression;
         try (ServerSocket serverSocket = new ServerSocket(4242))  {
             while (!exit) { //server loop
@@ -21,16 +31,16 @@ public class Server implements ServerInterface {
                     System.out.println("Client connected!");
 
                     while (true) { // individual client loop
-                        var clientRequest = reader.readObject(); // login
-                        LoginPayload payload = clientRequest.getPayload();
-                        String type = clientRequest.getType();
+                        ClientRequest req = safeRead(reader); // login
+                        LoginPayload payload = (LoginPayload) req.getPayload();
+                        String type = req.getType();
                         String username = payload.getUsername();
                         String password = payload.getPassword();
-                        var user = database.getUser(username);
+                        var user = database.getUserByUsername(username);
                         BasicUser currentUser;
 
                         if (user == null && !type.equals("LOGIN")){
-                            var creationDetails = reader.readObject();
+                            var creationDetails = safeRead(reader);
                             database.addUser(user);
                         } else if (user == null && type.equals("LOGIN")  || user != null && !type.equals("LOGIN")) {
                             ServerResponse res = new ServerResponse("regularMessage", new ServerPayload(false, "failure"));
@@ -41,10 +51,10 @@ public class Server implements ServerInterface {
                            // validate login in here some how
                             BasicUser tempUser = new BasicUser("temp", password, false);
                             String hashedPassword = tempUser.getPassword();
-                            if (user.getPassword().equals(hashedPassword)()) {
+                            if (user.getPassword().equals(hashedPassword)) {
                                 currentUser = user;
                                 ServerResponse res = new ServerResponse("regularMessage", new ServerPayload(true, "login success"));
-                                writer.writerObject(res);
+                                writer.writeObject(res);
                                 writer.flush();
                             }
                             else {
@@ -55,15 +65,15 @@ public class Server implements ServerInterface {
                             }
                         }
                         while (true) {
-                            var clientRequest = reader.readObject();
-                            String type = clientRequest.getType();
+                            var clientRequest = safeRead(reader);
+                            type = clientRequest.getType();
                             if (type.equals("RESERVE")) {
-                                ReservationPayload = clientRequest.getPayload();
+                                ReservationPayload reservationInfo = clientRequest.getPayload();
                                 BasicReservation reservation = new BasicReservation(currentUser.getUsername(),
-                                        ReservationPayload.getMovie(),
-                                        ReservationPayload.getDate(),
-                                        ReservationPayload.getStartRow(),
-                                        ReservationPayload.getStartSeat());
+                                        reservationInfo.getMovie(),
+                                        reservationInfo.getReservationDate(),
+                                        reservationInfo.getStartRow(),
+                                        reservationInfo.getStartSeat());
                                 boolean reserveStatus = database.reserve(currentUser, reservation);
                                 ServerResponse res = new ServerResponse("reserveStatus", new ServerPayload(reserveStatus, "reserveStatus"));
                                 writer.writeObject(res);
@@ -78,8 +88,8 @@ public class Server implements ServerInterface {
                                 ServerResponse response = new ServerResponse("names", new MovieListPayload(names));
                                 writer.writeObject(response);
                                 writer.flush();
-                                
-                                ServerResponse res = new ServerResponse("availability", new AvailabilityPayload(availability));
+
+                                ServerResponse res = new ServerResponse("availability", new AvailabilityPayload(auditoriums));
                                 writer.writeObject(res);
                                 writer.flush();
                             } else if (type.equals("EXIT")) {
