@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
@@ -177,7 +178,7 @@ public class BasicUser implements User, Serializable {
         }
     }
 
-    public boolean cancelReservation(String movie, String showTime, LocalDateTime date,
+    public boolean cancelReservation(String movie, String showTime, LocalDate date,
                                      int numPeople, double reservationFee) {
         lock.lock();
         try {
