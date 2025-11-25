@@ -37,10 +37,14 @@ public class Server implements ServerInterface {
                         BasicUser currentUser = new BasicUser();
 
                         if (user == null && type.equals("REGISTRATION")){
-                            //RegistrationPayload creationDetails = (RegistrationPayload) ServerInterface.safeRead(reader);
-                            //BasicUser newUser = new BasicUser(creationDetails.getUserName(), creationDetails.getPassword(), creationDetails.getAdmin(), creationDetails.getType());
+                            RegistrationPayload creationDetails = (RegistrationPayload) ServerInterface.safeRead(reader);
+                            BasicUser newUser = new BasicUser(creationDetails.getUserName(), creationDetails.getPassword(), creationDetails.getAdmin(), creationDetails.getType());
 
-                            database.addUser(user);
+                            database.addUser(newUser);
+
+                            ServerResponse res = new ServerResponse("accountCreated", new ServerPayload(true, "acccountCreated"));
+                            writer.writeObject(res);
+                            writer.flush();
                         } else if (user == null && type.equals("LOGIN")  || user != null && type.equals("REGISTRATION")) {
                             ServerResponse res = new ServerResponse("regularMessage", new ServerPayload(false, "failure"));
                             writer.writeObject(res); // client should handle this by saying password or account name wrong
@@ -97,8 +101,36 @@ public class Server implements ServerInterface {
                                 writer.writeObject(response);
                                 writer.flush();
                             } else if (type.equals("EDITSHOWINGTIME")) {
-                            //    EditShowingTimePayload time = (EditShowingTimePayload) clientRequest.getPayload();
+                                EditShowingTimePayload timeInfo = (EditShowingTimePayload) clientRequest.getPayload();
+                                LocalDateTime oldTime = timeInfo.getOldTime();
+                                LocalDateTime newTime = timeInfo.getNewTime();
 
+                                boolean pass = database.editShowingTime(oldTime, newTime);
+                                ServerResponse response = new ServerResponse("editShowingTime", new ServerPayload(pass, "passfail"));
+                                writer.writeObject(response);
+                                writer.flush();
+
+                            } else if (type.equals("CANCELSHOWING")) {
+                                CancelShowingPayload load = (CancelShowingPayload) clientRequest.getPayload();
+                                LocalDateTime time = load.getTime();
+                                boolean pass = database.deleteAuditorium(time);
+                                ServerResponse response = new ServerResponse("cancelShowing", new ServerPayload(pass, "passfail"));
+                                writer.writeObject(response);
+                                writer.flush();
+
+                            } else if (type.equals("CREATEVENUE")) {
+                                CreateVenuePayload venue = (CreateVenuePayload) clientRequest.getPayload();
+                                String name = venue.getName();
+                                int rows = venue.getRows();
+                                int cols = venue.getCols();
+                                String movieName = venue.getShowingName();
+                                LocalDateTime time = venue.getTime();
+                                double price = venue.getPrice();
+
+                                database.createAuditorium(rows, cols, price, movieName, time);
+                                ServerResponse response = new ServerResponse("createVenue", new ServerPayload(true, "pass"));
+                                writer.writeObject(response);
+                                writer.flush();
                             }
                             else if (type.equals("EXIT")) {
                                 break;

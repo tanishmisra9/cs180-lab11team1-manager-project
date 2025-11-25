@@ -66,9 +66,11 @@ public class ReservationDatabase implements Serializable {
      *
      * @param auditorium the auditorium to add
      */
-    public void addAuditorium(Auditorium auditorium) {
-        auditoriums.add(auditorium);
+    public void addAuditorium(Auditorium a) {
+        int idx = findInsertIndex(a.getShowingTime());
+        auditoriums.add(idx, a);
     }
+
 
     /**
      * Adds a user to the database.
@@ -145,6 +147,61 @@ public class ReservationDatabase implements Serializable {
     public List<Auditorium> getAuditoriums() {
         return new ArrayList<>(auditoriums);
     }
+
+    private Auditorium findByTime(LocalDateTime time) {
+        for (Auditorium a : auditoriums) {
+            if (a.getShowingTime().equals(time)) return a;
+        }
+        return null;
+    }
+
+    public boolean editShowingTime(LocalDateTime oldTime, LocalDateTime newTime) {
+        Auditorium a = findByTime(oldTime);
+        if (a == null) return false;
+
+        auditoriums.remove(a);
+        a.setShowingTime(newTime);
+
+        addAuditorium(a);
+
+        return true;
+    }
+
+    public boolean deleteAuditorium(LocalDateTime time) {
+        Auditorium a = findByTime(time);
+        if (a == null) return false;
+
+        auditoriums.remove(a);
+        return true;
+    }
+
+
+    public boolean editMovieName(LocalDateTime time, String newName) {
+        Auditorium a = findByTime(time);
+        if (a == null) return false;
+
+        a.setShowingName(newName);
+        return true;
+    }
+
+
+    private int findInsertIndex(LocalDateTime time) {
+        for (int i = 0; i < auditoriums.size(); i++) {
+            if (time.isBefore(auditoriums.get(i).getShowingTime())) {
+                return i;
+            }
+        }
+        return auditoriums.size(); // append at end
+    }
+
+    public Auditorium createAuditorium(int rows, int cols, double price,
+                                       String movie, LocalDateTime time) {
+
+        Auditorium a = new Auditorium(rows, cols, price, movie, time);
+        addAuditorium(a);
+        return a;
+    }
+
 
     public void populateDefaults() {
         if (!auditoriums.isEmpty()) return;  // already populated
