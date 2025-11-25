@@ -111,14 +111,14 @@ public class Server implements ServerInterface, Runnable {
                                 LocalDateTime time = nameLoad.getTime();
                                 String name = nameLoad.getNewMovieName();
 
-                                bool pass = database.editMovieName(time, name);
+                                boolean pass = database.editMovieName(time, name);
                                 ServerResponse res = new ServerResponse("editName", new ServerPayload(pass, "passfail"));
                                 writer.writeObject(res);
                                 writer.flush();
 
                             } else if (type.equals("EDITSHOWINGTIME")) {
                                 EditShowingTimePayload timeInfo = (EditShowingTimePayload) clientRequest.getPayload();
-                                LocalDateTime oldTime = timeInfo.getOldTime();
+                                LocalDateTime oldTime = timeInfo.getOldtime();
                                 LocalDateTime newTime = timeInfo.getNewTime();
 
                                 boolean pass = database.editShowingTime(oldTime, newTime);
