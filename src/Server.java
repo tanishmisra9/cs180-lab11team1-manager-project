@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 public class Server implements ServerInterface {
     private static boolean exit = false;
 
+    
+
     public static void main(String[] args) {
         ReservationDatabase database = ReservationDatabase.loadDatabase();
         int expression;
