@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
-import src.AdminPayloads.*;
+//import src.AdminPayloads.*;
 
 public class Server implements ServerInterface, Runnable {
     private boolean exit = false;
@@ -42,7 +42,7 @@ public class Server implements ServerInterface, Runnable {
                         var user = database.getUserByUsername(username);
                         BasicUser currentUser = new BasicUser();
 
-                        if (user == null && type.equals("REGISTRATION")){
+                        if (user == null && type.equals("REGISTER")){
                             RegistrationPayload creationDetails = (RegistrationPayload) req.getPayload();
                             BasicUser newUser = new BasicUser(creationDetails.getUsername(), creationDetails.getPassword(), creationDetails.isAdmin());
 

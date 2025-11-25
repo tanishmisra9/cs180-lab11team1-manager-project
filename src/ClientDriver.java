@@ -53,8 +53,11 @@ public class ClientDriver {
                 System.out.println("\nEnter password:");
                 String password = sc.nextLine();
 
+                System.out.println("registering");
                 service.register(username, password);
+                System.out.println("request sent to server");
                 ServerResponse resp = service.receiveResponse();
+                System.out.println("response recieved");
 
                 if (resp != null && resp.getPayload() instanceof ServerPayload payload) {
                     if (payload.getSuccess()) {
@@ -196,7 +199,20 @@ public class ClientDriver {
                             case "1":
                                 System.out.println("Enter new name:");
                                 String newName = sc.nextLine();
-                                service.editShowingName(movieToEdit, newName);
+                                System.out.println("Enter old time:");
+                                System.out.println("Enter new year:");
+                                int year = Integer.parseInt(sc.nextLine());
+                                System.out.println("Enter new month:");
+                                int month = Integer.parseInt(sc.nextLine());
+                                System.out.println("Enter new day:");
+                                int day = Integer.parseInt(sc.nextLine());
+                                System.out.println("Enter new hour:");
+                                int hour = Integer.parseInt(sc.nextLine());
+                                System.out.println("Enter new minute:");
+                                int min = Integer.parseInt(sc.nextLine());
+                                LocalDateTime changeTime = LocalDateTime.of(year, month, day, hour, min);
+
+                                service.editShowingName(movieToEdit, newName, changeTime);
                                 break;
                             case "2":
                                 System.out.println("Enter new year:");

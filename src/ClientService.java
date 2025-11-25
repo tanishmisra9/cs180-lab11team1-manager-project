@@ -1,5 +1,5 @@
 package src;
-import src.AdminPayloads.*;
+//import src.AdminPayloads.*;
 import java.time.LocalDateTime;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -85,7 +85,7 @@ public class ClientService {
     // --------------------------
     // ADMIN SHOWING MANAGEMENT
     // --------------------------
-    public void editShowingName(String oldName, String newName) {
+    public void editShowingName(String oldName, String newName, LocalDateTime oldtime) {
         EditShowingNamePayload payload = new EditShowingNamePayload(oldName, newName, oldtime);
         ClientRequest req = new ClientRequest("EDIT_SHOWING_NAME", payload);
         client.sendRequest(req);
@@ -112,7 +112,9 @@ public class ClientService {
         /** Blocking method to get the next ServerResponse */
         public ServerResponse receiveResponse() {
             try {
+                System.out.println("waiting...");
                 return responseQueue.take(); // waits until a response is available
+                System.out.println("recieved");
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 return null;
