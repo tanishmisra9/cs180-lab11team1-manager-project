@@ -131,6 +131,7 @@ public class ClientDriver {
             }
             System.out.println("Choose movie showing time");
             int dateChoice = sc.nextInt();
+            sc.nextLine();
             Auditorium chosenAuditorium = showingsForMovie.get(dateChoice);
 
 
@@ -155,10 +156,12 @@ public class ClientDriver {
                     System.out.println("Enter col:");
                     String colStr = sc.nextLine();
 
-                    int r = -1, c = -1;
+                    int r = -1, c = -1, userRow = -1, userCol = -1;
                     try {
-                        r = Integer.parseInt(rowStr) - 1;
-                        c = Integer.parseInt(colStr) - 1;
+                        userRow = Integer.parseInt(rowStr);
+                        userCol = Integer.parseInt(colStr);
+                        r = userRow - 1;
+                        c = userCol - 1;
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid numbers.");
                         continue;
@@ -173,7 +176,7 @@ public class ClientDriver {
                         continue;
                     }
 
-                service.reserveSeat(r, c, currentUsername, chosenAuditorium);
+                service.reserveSeat(userRow, userCol, currentUsername, chosenAuditorium);
                 resp = service.receiveResponse();
                 if (resp != null && resp.getPayload() instanceof ServerPayload payload) {
                     ServerPayload tuna = (ServerPayload) resp.getPayload();
