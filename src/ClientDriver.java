@@ -12,7 +12,6 @@ public class ClientDriver {
         BasicClient client = new BasicClient();
         ClientService service = new ClientService(client);
         service.connectToServer();
-        
 
         boolean isAdmin = false;
         String currentUsername = null;
@@ -30,8 +29,10 @@ public class ClientDriver {
                 String username = sc.nextLine();
                 System.out.println("\nPassword:");
                 String password = sc.nextLine();
-
-                service.login(username, password);
+                System.out.println("\n Is Admin? true/false:");
+                String adminInput = sc.nextLine();
+                boolean isAdminInput = Boolean.parseBoolean(adminInput);
+                service.login(username, password, isAdminInput);
                 ServerResponse resp = service.receiveResponse();
 
                 if (resp != null && resp.getPayload() instanceof ServerPayload payload) {
@@ -52,9 +53,12 @@ public class ClientDriver {
                 String username = sc.nextLine();
                 System.out.println("\nEnter password:");
                 String password = sc.nextLine();
+                System.out.println("\n Is Admin? true/false:");
+                String adminInput = sc.nextLine();
+                boolean isAdminInput = Boolean.parseBoolean(adminInput);
 
                 System.out.println("registering");
-                service.register(username, password);
+                service.register(username, password, isAdminInput);
                 System.out.println("request sent to server");
                 ServerResponse resp = service.receiveResponse();
                 System.out.println("response recieved");
@@ -195,134 +199,12 @@ public class ClientDriver {
             if (answer.equalsIgnoreCase("n")) break;
 
         }
-
-        // ADMIN FLOW
+        // after login / register and isAdmin check
         if (isAdmin) {
-
-            adminLoop:
-            while (true) {
-                System.out.println("\n--- Admin Menu ---");
-                System.out.println("1: Reserve seat for user");
-                System.out.println("2: Edit showing");
-                System.out.println("3: Create venue");
-                System.out.println("Type 'exit' to quit");
-
-                String input = sc.nextLine();
-                switch (input) {
-                    case "1":
-                        System.out.println("Enter movie to reserve seat in:"); // we cant distinguish by movie, it has to be by time.
-                        String movie = sc.nextLine();
-                        service.requestAuditorium(movie);
-                        ServerResponse seatResp = service.receiveResponse();
-                        String[][] seats = new String[0][];
-                        if (seatResp != null && seatResp.getPayload() instanceof AuditoriumPayload ap) {
-                            seats = ap.getSeats();
-                        }
-
-                        System.out.println("Enter username for reservation:");
-                        String userToReserve = sc.nextLine();
-
-                        System.out.println("Enter row:");
-                        int row = Integer.parseInt(sc.nextLine()) - 1;
-                        System.out.println("Enter col:");
-                        int col = Integer.parseInt(sc.nextLine()) - 1;
-
-                       // service.reserveSeat(row, col, userToReserve, TODO: Auditorium here, look above, time implementation like that just put it here. );
-                        ServerResponse res = service.receiveResponse();
-                        if (res != null && res.getPayload() instanceof ServerPayload payload) {
-                            System.out.println(payload.getMessage());
-                        }
-                        break;
-
-                    case "2":
-                        System.out.println("Enter movie to edit:");
-                        String movieToEdit = sc.nextLine();
-                        System.out.println("1: Change name\n2: Change time\n3: Cancel showing");
-                        String editChoice = sc.nextLine();
-
-                        switch (editChoice) {
-                            case "1":
-                                System.out.println("Enter new name:");
-                                String newName = sc.nextLine();
-                                System.out.println("Enter old time:");
-                                System.out.println("Enter new year:");
-                                int year = Integer.parseInt(sc.nextLine());
-                                System.out.println("Enter new month:");
-                                int month = Integer.parseInt(sc.nextLine());
-                                System.out.println("Enter new day:");
-                                int day = Integer.parseInt(sc.nextLine());
-                                System.out.println("Enter new hour:");
-                                int hour = Integer.parseInt(sc.nextLine());
-                                System.out.println("Enter new minute:");
-                                int min = Integer.parseInt(sc.nextLine());
-                                LocalDateTime changeTime = LocalDateTime.of(year, month, day, hour, min);
-
-                                service.editShowingName(movieToEdit, newName, changeTime);
-                                break;
-                            case "2":
-                                System.out.println("Enter new year:");
-                                int y = Integer.parseInt(sc.nextLine());
-                                System.out.println("Enter new month:");
-                                int mo = Integer.parseInt(sc.nextLine());
-                                System.out.println("Enter new day:");
-                                int d = Integer.parseInt(sc.nextLine());
-                                System.out.println("Enter new hour:");
-                                int h = Integer.parseInt(sc.nextLine());
-                                System.out.println("Enter new minute:");
-                                int mi = Integer.parseInt(sc.nextLine());
-                                LocalDateTime newTime = LocalDateTime.of(y, mo, d, h, mi);
-
-                                System.out.println("Enter new year:");
-                                y = Integer.parseInt(sc.nextLine());
-                                System.out.println("Enter new month:");
-                                mo = Integer.parseInt(sc.nextLine());
-                                System.out.println("Enter new day:");
-                                d = Integer.parseInt(sc.nextLine());
-                                System.out.println("Enter new hour:");
-                                h = Integer.parseInt(sc.nextLine());
-                                System.out.println("Enter new minute:");
-                                mi = Integer.parseInt(sc.nextLine());
-                                LocalDateTime oldTime = LocalDateTime.of(y, mo, d, h, mi);
-                                service.editShowingTime(movieToEdit, newTime, oldTime);
-                                break;
-                            case "3":
-                                service.cancelShowing(movieToEdit);
-                                break;
-                            default:
-                                System.out.println("Invalid choice");
-                                break;
-                        }
-                        break;
-
-                    case "3":
-                        System.out.println("Enter venue name:");
-                        String venueName = sc.nextLine();
-                        System.out.println("Enter rows:");
-                        int venueRows = Integer.parseInt(sc.nextLine());
-                        System.out.println("Enter cols:");
-                        int venueCols = Integer.parseInt(sc.nextLine());
-                        System.out.println("Enter showing name:");
-                        String showingName = sc.nextLine();
-                        System.out.println("Enter time (yyyy-mm-ddTHH:mm):");
-                        LocalDateTime showingTime = LocalDateTime.parse(sc.nextLine());
-                        System.out.println("Enter default seat price:");
-                        double price = Double.parseDouble(sc.nextLine());
-
-                        service.createVenue(venueName, venueRows, venueCols, showingName, showingTime, price);
-                        ServerResponse venueResp = service.receiveResponse();
-                        if (venueResp != null && venueResp.getPayload() instanceof ServerPayload payload) {
-                            System.out.println(payload.getMessage());
-                        }
-                        break;
-
-                    case "exit":
-                        break adminLoop;
-                    default:
-                        System.out.println("Invalid input");
-                        break;
-                }
-            }
+            AdminInterface.runAdminFlow(service, sc);
         }
+
+        
 
         System.out.println("\nThank you for using the service!");
         sc.close();

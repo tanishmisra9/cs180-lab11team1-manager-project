@@ -58,7 +58,7 @@ public class Server implements ServerInterface, Runnable {
                             LoginPayload p = (LoginPayload) req.getPayload();
                             var user = database.getUserByUsername(p.getUsername());
 
-                            BasicUser temp = new BasicUser("temp", p.getPassword(), false);
+                            BasicUser temp = new BasicUser("temp", p.getPassword(), p.getIsAdmin());
                             String hashed = temp.getPassword();
 
                             if (user != null && user.getPassword().equals(hashed)) {

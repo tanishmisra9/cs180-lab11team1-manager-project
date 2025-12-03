@@ -38,16 +38,17 @@ public class ClientService {
     // --------------------------
     // LOGIN / REGISTER
     // --------------------------
-    public void login(String username, String password) {
+    public void login(String username, String password, boolean isAdmin) {
         ClientRequest req = new ClientRequest(
                 "LOGIN",
-                new LoginPayload(username, password)
+                new LoginPayload(username, password, isAdmin)
         );
         client.sendRequest(req);
     }
 
-    public void register(String username, String password) {
-        RegistrationPayload payload = new RegistrationPayload(username, password);
+
+    public void register(String username, String password, boolean isAdmin) {
+        RegistrationPayload payload = new RegistrationPayload(username, password, isAdmin);
         ClientRequest req = new ClientRequest("REGISTER", payload);
         client.sendRequest(req);
     }
@@ -57,6 +58,7 @@ public class ClientService {
         ClientRequest req = new ClientRequest("IS_ADMIN", payload);
         client.sendRequest(req);
     }
+    
 
     // --------------------------
     // MESSAGES / LOGOUT
@@ -106,8 +108,8 @@ public class ClientService {
         client.sendRequest(req);
     }
 
-    public void cancelShowing(String movieName) {
-        CancelShowingPayload payload = new CancelShowingPayload(movieName, null);
+    public void cancelShowing(String movieName, LocalDateTime cancelTime) {
+        CancelShowingPayload payload = new CancelShowingPayload(movieName, cancelTime);
         ClientRequest req = new ClientRequest("CANCEL_SHOWING", payload);
         client.sendRequest(req);
     }
@@ -117,6 +119,8 @@ public class ClientService {
         ClientRequest req = new ClientRequest("CREATE_VENUE", payload);
         client.sendRequest(req);
     }
+
+    
 
 
         /** Blocking method to get the next ServerResponse */
