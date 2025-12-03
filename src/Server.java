@@ -136,6 +136,7 @@ public class Server implements ServerInterface, Runnable {
                             writer.writeObject(new ServerResponse(
                                     "editName",
                                     new ServerPayload(pass, "passfail")));
+
                             writer.flush();
                         }
 

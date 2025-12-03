@@ -4,6 +4,7 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -181,7 +182,9 @@ public class ReservationDatabase implements Serializable {
         if (a == null) return false;
 
         a.setShowingName(newName);
-      //  System.out.println()
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM dd, yyyy h:mm a");
+        String pretty = a.getShowingTime().format(fmt);
+        System.out.println(pretty);
         return true;
     }
 

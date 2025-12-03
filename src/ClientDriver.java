@@ -112,10 +112,10 @@ public class ClientDriver {
             while (true) {
                 System.out.println("\nSelect movie:");
                 String input = sc.nextLine();
-                if (movies.stream().anyMatch(m -> m.equalsIgnoreCase(input))) {
-                    movieSelected[0] = input; // set selected movie
+                if (movies.stream().anyMatch(m -> m.equals(input))) {
+                    movieSelected[0] = input;
                     break;
-                }
+                } // i made it case sensitive because it breaks later if not
                 System.out.println("Invalid movie!");
             }
 
