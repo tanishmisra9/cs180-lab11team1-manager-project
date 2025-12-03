@@ -39,7 +39,10 @@ public class Server implements ServerInterface, Runnable {
 
                     while (true) {  // client loop
                         ClientRequest req = ServerInterface.safeRead(reader);
-
+                        if (req == null) {
+                            System.out.println("Client disconnected!");
+                            break;
+                        }
                         /* ------------------------ REGISTRATION ------------------------ */
                         if (req.getPayload() instanceof RegistrationPayload) {
                             RegistrationPayload p = (RegistrationPayload) req.getPayload();

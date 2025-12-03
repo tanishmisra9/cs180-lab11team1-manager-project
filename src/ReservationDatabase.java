@@ -181,6 +181,7 @@ public class ReservationDatabase implements Serializable {
         if (a == null) return false;
 
         a.setShowingName(newName);
+      //  System.out.println()
         return true;
     }
 
