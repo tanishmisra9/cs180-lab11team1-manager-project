@@ -49,6 +49,7 @@ public class Server implements ServerInterface, Runnable {
                             BasicUser newUser = new BasicUser(p.getUsername(), p.getPassword(), p.isAdmin());
 
                             database.addUser(newUser);
+                            database.saveData(); // Save to disk
 
                             writer.writeObject(new ServerResponse(
                                     "accountCreated",
@@ -95,6 +96,10 @@ public class Server implements ServerInterface, Runnable {
 
                             boolean success = database.reserve(currentUser, reservation);
 
+                            if (success) {
+                                database.saveData(); // Save to disk after successful reservation
+                            }
+
                             writer.writeObject(new ServerResponse(
                                     "reserveStatus",
                                     new ServerPayload(success, "reserveStatus")));
@@ -133,6 +138,10 @@ public class Server implements ServerInterface, Runnable {
 
                             boolean pass = database.editMovieName(p.getTime(), p.getNewMovieName());
 
+                            if (pass) {
+                                database.saveData(); // Save to disk
+                            }
+
                             writer.writeObject(new ServerResponse(
                                     "editName",
                                     new ServerPayload(pass, "passfail")));
@@ -146,6 +155,10 @@ public class Server implements ServerInterface, Runnable {
 
                             boolean pass = database.editShowingTime(p.getOldTime(), p.getNewTime());
 
+                            if (pass) {
+                                database.saveData(); // Save to disk
+                            }
+
                             writer.writeObject(new ServerResponse(
                                     "editShowingTime",
                                     new ServerPayload(pass, "passfail")));
@@ -157,6 +170,10 @@ public class Server implements ServerInterface, Runnable {
                             CancelShowingPayload p = (CancelShowingPayload) req.getPayload();
 
                             boolean pass = database.deleteAuditorium(p.getTime());
+
+                            if (pass) {
+                                database.saveData(); // Save to disk
+                            }
 
                             writer.writeObject(new ServerResponse(
                                     "cancelShowing",
@@ -175,6 +192,8 @@ public class Server implements ServerInterface, Runnable {
                                     p.getShowingName(),
                                     p.getShowingTime()
                             );
+
+                            database.saveData(); // Save to disk
 
                             writer.writeObject(new ServerResponse(
                                     "createVenue",
@@ -211,7 +230,7 @@ public class Server implements ServerInterface, Runnable {
 
 
 // commented code
- 
+
 // if (user == null && type.equals("REGISTER")){
 // } else if (user == null && type.equals("LOGIN")  || user != null && type.equals("REGISTRATION")) {
 //     ServerResponse res = new ServerResponse("regularMessage", new ServerPayload(false, "failure"));
